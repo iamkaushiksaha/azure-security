@@ -1,124 +1,183 @@
-👉 Purpose: Teach how to think in KQL, not just syntax
-👉 Audience: SOC L1/L2, Sentinel beginners, career switchers
+# KQL Basics – Foundation for Microsoft Sentinel
 
-📘 KQL Basics for Microsoft Sentinel (Beginner-Friendly)
-Why this lab exists
+This guide introduces **Kusto Query Language (KQL)** from a security analyst’s perspective.  
+Instead of memorizing syntax, you will learn **how to think in KQL** using realistic Microsoft Sentinel data.
 
-Most people learn KQL by copy-pasting queries.
-That works… until something breaks.
+This module uses **`SigninLogs`** as the primary dataset because it is:
 
-This guide focuses on:
+- One of the most critical Microsoft Sentinel tables  
+- Rich in identity, network, application, and risk signals  
+- Reusable for hunting, detections, and investigations  
 
-Understanding how KQL thinks
+---
 
-Building queries step by step
+## What is KQL?
 
-Preparing you for real Sentinel investigations
+KQL is a **read-only query language** optimized for:
 
-This is the foundation for all Sentinel hunting, analytics rules, and workbooks.
+- Log analytics  
+- Threat hunting  
+- Telemetry exploration  
+- Security investigations  
 
-🧠 How to think in KQL (mental model)
+It is used across:
 
-KQL always follows this flow:
+- Microsoft Sentinel  
+- Azure Data Explorer (ADX)  
+- Log Analytics  
+- Microsoft Defender  
 
+---
+
+## How to Think in KQL (Mental Model)
+
+KQL queries always flow **left → right**:
+
+```kql
 Table
-→ Filter rows
-→ Shape columns
-→ Aggregate (optional)
-→ Sort / visualize
+| Filter
+| Transform
+| Aggregate
+| Sort / Project
+```
 
+### Example Query Flow
 
-Example:
-
+```kql
 SigninLogs
 | where ResultType != "0"
-| summarize count() by UserPrincipalName
-| sort by count_ desc
+| summarize FailedAttempts = count() by UserPrincipalName
+| sort by FailedAttempts desc
+```
 
-📦 Common Sentinel Tables you’ll practice on
+---
 
-In this lab, we’ll simulate these Sentinel tables using CSV data:
+## Core Operators Every Analyst Must Know
 
-Table Name	What it represents
-SigninLogs	Azure AD sign-ins
-AuditLogs	Azure AD changes
-SecurityEvent	Windows security logs
-SecurityAlert	Defender alerts
-SecurityIncident	Sentinel incidents
-🔑 Essential KQL operators (you MUST know these)
-take
+| Operator | Purpose |
+|--------|--------|
+| `where` | Filter rows |
+| `project` | Select columns |
+| `extend` | Create calculated fields |
+| `summarize` | Aggregate data |
+| `count()` | Event counting |
+| `sort by` | Ordering |
+| `parse_json()` | Parse dynamic fields |
+| `tostring()` | Convert data types |
+| `distinct` | Return unique values |
+| `take` | Preview rows |
 
-Quickly preview data.
+---
 
-SigninLogs
-| take 10
+## Key Columns from `SigninLogs` (Used Throughout Labs)
 
-where
+| Column | Why It Matters |
+|------|---------------|
+| `TimeGenerated` | Timeline analysis |
+| `UserPrincipalName` | Identity tracking |
+| `IPAddress` | Network analysis |
+| `AppDisplayName` | Application abuse detection |
+| `ClientAppUsed` | Legacy authentication risk |
+| `Location` | Geographic anomaly detection |
+| `ResultType` | Success vs failure |
+| `ResultDescription` | Failure reason |
+| `CorrelationId` | Session tracing |
+| `RiskLevelAggregated` | Identity risk assessment |
 
-Filter rows (this is 80% of KQL).
+---
 
-SigninLogs
-| where ResultType != "0"
+## ⏱️ Time Filtering & Query Hygiene (Read This Carefully)
 
-project
+Most Microsoft Sentinel and Log Analytics tables are **time-series datasets**.  
+Almost every investigation starts with **time**.
 
-Select only useful columns.
+The standard column used for time filtering is:
 
-SigninLogs
-| project TimeGenerated, UserPrincipalName, IPAddress
+```kql
+TimeGenerated
+```
 
-extend
+### Basic Time Filter Example
 
-Create calculated fields.
-
-SigninLogs
-| extend IsFailure = ResultType != "0"
-
-summarize
-
-Aggregate data (counts, trends).
-
-SigninLogs
-| summarize FailedLogins = count() by UserPrincipalName
-
-sort by
-
-Rank results.
-
-SigninLogs
-| summarize count() by IPAddress
-| sort by count_ desc
-
-⏱️ Time filtering (very important)
-
-Most Sentinel tables use TimeGenerated.
-
+```kql
 SigninLogs
 | where TimeGenerated > ago(24h)
+```
 
+> ⚠️ Forgetting time filters is one of the most common beginner mistakes and can result in slow queries or misleading results.
 
-⚠️ Forgetting time filters is one of the most common mistakes.
+---
 
-🚫 Beginner mistakes to avoid
+## 🚫 Common Beginner Mistakes to Avoid
 
-❌ Filtering before checking column names
-❌ Forgetting TimeGenerated
-❌ Using project *
-❌ Copy-pasting without understanding
+❌ Filtering before checking column names  
+❌ Forgetting `TimeGenerated`  
+❌ Using `project *` on large datasets  
+❌ Copy-pasting queries without understanding the logic  
 
-✅ Always start with:
+---
 
-TableName
+## ✅ Best Practice: Always Start Like This
+
+```kql
+SigninLogs
 | take 10
+```
 
-🎯 What’s next?
+This helps you:
+- Understand available columns  
+- Inspect real values  
+- Avoid syntax errors  
+- Write cleaner and faster queries  
 
-Once you understand these basics, you’re ready to:
+---
 
-Load real data
+## 🧭 Recommended Query Flow
 
-Practice on realistic logs
+```kql
+Table
+| take 10
+| where TimeGenerated > ago(24h)
+| where <condition>
+| summarize <aggregation>
+| sort by <field>
+```
 
-Build detection logic
+---
 
-➡️ Continue to Lab02 – ADX Setup to load Sentinel-like data and practice KQL hands-on.
+## Example Queries
+
+### Failed Sign-ins by User
+
+```kql
+SigninLogs
+| where ResultType != "0"
+| summarize Failed = count() by UserPrincipalName
+| sort by Failed desc
+```
+
+### Suspicious IP Addresses
+
+```kql
+SigninLogs
+| where ResultType != "0"
+| summarize Attempts = count() by IPAddress
+| sort by Attempts desc
+```
+
+### Legacy Authentication Usage
+
+```kql
+SigninLogs
+| where ClientAppUsed !in ("Browser", "Mobile Apps and Desktop clients")
+| summarize count() by ClientAppUsed
+```
+
+---
+
+## What Comes Next?
+
+- **Lab02** – Setting up Azure Data Explorer  
+- MITRE-mapped hunting queries  
+- Detection rule design  
+- Cross-table correlation  
