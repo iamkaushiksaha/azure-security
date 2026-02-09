@@ -1,0 +1,7 @@
+
+TimeGenerated,UserPrincipalName,IPAddress,Location,ResultType,AppDisplayName,ClientAppUsed,RiskLevel,RiskEventTypes,AuthenticationMethodsUsed,IsInteractive
+2026-02-07T12:45:00Z,user1@contoso.com,192.168.1.101,IN,0,Microsoft Office 365,Browser,low,none,Password,True
+2026-02-07T13:00:00Z,user2@contoso.com,203.0.113.55,RU,50038,Azure Portal,Browser,high,maliciousIPAddress,Password,False
+2026-02-07T13:05:00Z,user2@contoso.com,203.0.113.55,RU,50038,Azure Portal,Browser,high,maliciousIPAddress,Password,False
+2026-02-07T14:15:00Z,serviceAccount@contoso.com,198.51.100.22,US,0,SharePoint Online,Modern clients,low,none,"Password,MFA",True
+2026-02-07T15:30:00Z,admin@contoso.com,10.0.0.5,US,0,Azure Portal,Browser,medium,unfamiliarFeatures,Password,True

@@ -1,0 +1,3 @@
+
+TimeGenerated,IncidentNumber,Title,Severity,Status,CreatedTime,ClosedTime,FirstActivityTime,LastActivityTime,AlertIds
+2026-02-07T08:30:00Z,1001,Credential access attack detected,Medium,Active,2026-02-07T08:30:00Z,,2026-02-07T08:20:00Z,2026-02-07T08:25:00Z,"[""A1"", ""A2""]"

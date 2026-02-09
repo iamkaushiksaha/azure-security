@@ -1,0 +1,5 @@
+
+TimeGenerated,ActivityStatusValue,ActivitySubstatusValue,CallerIpAddress,OperationName,OperationNameValue,ResourceGroup,ResourceId,SubscriptionId,CategoryValue
+2026-02-07T09:00:00Z,Succeeded,OK,10.0.0.5,Microsoft.Compute/virtualMachines/write,MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE,ProdRG,/subscriptions/1111/resourceGroups/ProdRG/providers/Microsoft.Compute/virtualMachines/vm01,1111,Administrative
+2026-02-07T09:05:00Z,Started,Accepted,203.0.113.56,Microsoft.Storage/storageAccounts/delete,MICROSOFT.STORAGE/STORAGEACCOUNTS/DELETE,TestRG,/subscriptions/1111/resourceGroups/TestRG/providers/Microsoft.Storage/storageAccounts/teststorage,1111,Administrative
+2026-02-07T09:15:00Z,Failed,NotFound,198.51.100.23,Microsoft.Compute/disks/delete,MICROSOFT.COMPUTE/DISKS/DELETE,ProdRG,/subscriptions/1111/resourceGroups/ProdRG/providers/Microsoft.Compute/disks/oldDisk,1111,Administrative

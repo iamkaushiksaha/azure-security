@@ -1,0 +1,5 @@
+
+TimeGenerated,EventID,AccountName,AccountDomain,Computer,EventLevelName,Activity,ProcessName
+2026-02-07T08:00:00Z,4624,user1,CONTOSO,SERVER01,Information,An account was successfully logged on,C:\Windows\System32\winlogon.exe
+2026-02-07T08:05:00Z,4625,user2,CONTOSO,SERVER01,Failure,An account failed to log on,C:\Windows\System32\winlogon.exe
+2026-02-07T08:10:00Z,4688,user3,CONTOSO,SERVER02,Information,A new process has been created,C:\Program Files\malware.exe

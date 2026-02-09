@@ -1,0 +1,4 @@
+
+TimeGenerated,AlertName,AlertSeverity,AlertType,CompromisedEntity,Tactics,Techniques,Entities,RemediationSteps
+2026-02-07T08:20:00Z,Multiple failed sign-in attempts,Medium,Brute force,user2@contoso.com,Credential Access,T1110,"[{""IPAddress"":""203.0.113.55""}]",Investigate user sign-in attempts and reset password.
+2026-02-07T08:25:00Z,Suspicious process creation,High,Execution,SERVER02,Execution,T1204,"[{""ProcessName"":""C:\Program Files\malware.exe""}]",Isolate the host and analyze the process.

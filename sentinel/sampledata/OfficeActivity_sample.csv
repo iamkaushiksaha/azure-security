@@ -1,0 +1,5 @@
+
+TimeGenerated,Activity,Actor,ActorIpAddress,Workload,ItemName,ClientIP
+2026-02-07T10:00:00Z,FileDeleted,user1@contoso.com,192.168.1.101,OneDrive,financial-report.xlsx,192.168.1.101
+2026-02-07T10:10:00Z,FileModified,user2@contoso.com,203.0.113.55,SharePoint,internal-policy.docx,203.0.113.55
+2026-02-07T10:20:00Z,MailboxLogin,serviceAccount@contoso.com,198.51.100.22,Exchange,,198.51.100.22
