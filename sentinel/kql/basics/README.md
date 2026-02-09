@@ -1,26 +1,50 @@
-# KQL Basics – Foundation for Microsoft Sentinel
+# KQL Basics  
+### A Practical Foundation for Microsoft Sentinel Analysts
 
-This guide introduces **Kusto Query Language (KQL)** from a security analyst’s perspective.  
-Instead of memorizing syntax, you will learn **how to think in KQL** using realistic Microsoft Sentinel data.
-
-This module uses **`SigninLogs`** as the primary dataset because it is:
-
-- One of the most critical Microsoft Sentinel tables  
-- Rich in identity, network, application, and risk signals  
-- Reusable for hunting, detections, and investigations  
+> **Audience:** SOC Tier 1–2 Analysts, Threat Hunters, Detection Engineers  
+> **Goal:** Learn how to *think* in KQL — not just copy queries
 
 ---
 
-## What is KQL?
+## 🎯 Why This Module Exists
 
-KQL is a **read-only query language** optimized for:
+Kusto Query Language (**KQL**) is the backbone of **Microsoft Sentinel**, **Azure Monitor**, and **Microsoft Defender** analytics.
+
+Many analysts struggle not because KQL is complex —  
+but because they approach it as **syntax**, not **logic**.
+
+This guide helps you:
+
+- Build a strong **mental model** for KQL  
+- Understand how Sentinel data behaves at scale  
+- Write queries that are **efficient, readable, and reusable**  
+
+---
+
+## 📊 Dataset Used Throughout This Guide
+
+We use **`SigninLogs`** as the primary dataset because it is:
+
+- One of the most security-critical Sentinel tables  
+- Rich in identity, network, application, and risk signals  
+- Reusable across hunting, detections, and investigations  
+
+> Mastering `SigninLogs` makes every other Sentinel table easier.
+
+---
+
+## 🔍 What Is KQL?
+
+KQL is a **read-only query language** designed for **high-volume telemetry**.
+
+It is optimized for:
 
 - Log analytics  
 - Threat hunting  
 - Telemetry exploration  
 - Security investigations  
 
-It is used across:
+Used across:
 
 - Microsoft Sentinel  
 - Azure Data Explorer (ADX)  
@@ -29,11 +53,12 @@ It is used across:
 
 ---
 
-## How to Think in KQL (Mental Model)
+## 🧠 How to Think in KQL (Mental Model)
 
-KQL queries always flow **left → right**:
+KQL queries execute **left → right**.  
+Each line transforms the output of the previous one.
 
-```kql
+```text
 Table
 | Filter
 | Transform
@@ -41,7 +66,7 @@ Table
 | Sort / Project
 ```
 
-### Example Query Flow
+### Example: Reading a Query Like a Sentence
 
 ```kql
 SigninLogs
@@ -52,89 +77,76 @@ SigninLogs
 
 ---
 
-## Core Operators Every Analyst Must Know
+## 🧩 Core Operators Every Analyst Must Know
 
-| Operator | Purpose |
-|--------|--------|
-| `where` | Filter rows |
-| `project` | Select columns |
-| `extend` | Create calculated fields |
-| `summarize` | Aggregate data |
-| `count()` | Event counting |
-| `sort by` | Ordering |
-| `parse_json()` | Parse dynamic fields |
-| `tostring()` | Convert data types |
-| `distinct` | Return unique values |
-| `take` | Preview rows |
+| Operator | Why It Matters |
+|--------|---------------|
+| `where` | Reduce noise early |
+| `project` | Improve readability |
+| `extend` | Add calculated logic |
+| `summarize` | Reveal patterns |
+| `count()` | Measure activity |
+| `sort by` | Prioritize results |
+| `parse_json()` | Extract dynamic data |
+| `tostring()` | Normalize types |
+| `distinct` | Identify uniqueness |
+| `take` | Safely explore data |
 
 ---
 
-## Key Columns from `SigninLogs` (Used Throughout Labs)
+## 🧱 Key Columns from `SigninLogs`
 
 | Column | Why It Matters |
 |------|---------------|
-| `TimeGenerated` | Timeline analysis |
+| `TimeGenerated` | Timeline reconstruction |
 | `UserPrincipalName` | Identity tracking |
 | `IPAddress` | Network analysis |
-| `AppDisplayName` | Application abuse detection |
-| `ClientAppUsed` | Legacy authentication risk |
-| `Location` | Geographic anomaly detection |
+| `AppDisplayName` | Application abuse |
+| `ClientAppUsed` | Legacy auth risk |
+| `Location` | Geo anomalies |
 | `ResultType` | Success vs failure |
-| `ResultDescription` | Failure reason |
+| `ResultDescription` | Failure context |
 | `CorrelationId` | Session tracing |
-| `RiskLevelAggregated` | Identity risk assessment |
+| `RiskLevelAggregated` | Identity risk |
 
 ---
 
-## ⏱️ Time Filtering & Query Hygiene (Read This Carefully)
+## ⏱️ Time Filtering & Query Hygiene
 
-Most Microsoft Sentinel and Log Analytics tables are **time-series datasets**.  
-Almost every investigation starts with **time**.
-
-The standard column used for time filtering is:
-
-```kql
-TimeGenerated
-```
-
-### Basic Time Filter Example
+Every investigation should start with **time**.
 
 ```kql
 SigninLogs
 | where TimeGenerated > ago(24h)
 ```
 
-> ⚠️ Forgetting time filters is one of the most common beginner mistakes and can result in slow queries or misleading results.
+> ⚠️ Missing time filters often leads to slow or misleading queries.
 
 ---
 
-## 🚫 Common Beginner Mistakes to Avoid
+## 🚫 Common Beginner Mistakes
 
-❌ Filtering before checking column names  
-❌ Forgetting `TimeGenerated`  
-❌ Using `project *` on large datasets  
-❌ Copy-pasting queries without understanding the logic  
+- Filtering before understanding columns  
+- Forgetting `TimeGenerated`  
+- Using `project *` on large datasets  
+- Copy-pasting queries blindly  
 
 ---
 
-## ✅ Best Practice: Always Start Like This
+## ✅ Best Practice: Start Like This
 
 ```kql
 SigninLogs
 | take 10
 ```
 
-This helps you:
-- Understand available columns  
-- Inspect real values  
-- Avoid syntax errors  
-- Write cleaner and faster queries  
+This helps you understand schema, values, and behavior safely.
 
 ---
 
-## 🧭 Recommended Query Flow
+## 🧭 Recommended Query Development Flow
 
-```kql
+```text
 Table
 | take 10
 | where TimeGenerated > ago(24h)
@@ -145,7 +157,7 @@ Table
 
 ---
 
-## Example Queries
+## 🧪 Practical Examples
 
 ### Failed Sign-ins by User
 
@@ -175,9 +187,13 @@ SigninLogs
 
 ---
 
-## What Comes Next?
+## 🚀 What Comes Next
 
-- **Lab02** – Setting up Azure Data Explorer  
+- Lab02 – Azure Data Explorer setup  
 - MITRE-mapped hunting queries  
-- Detection rule design  
+- Detection rule engineering  
 - Cross-table correlation  
+
+---
+
+> **Status:** Enterprise-ready • Training-grade • GitHub compatible
