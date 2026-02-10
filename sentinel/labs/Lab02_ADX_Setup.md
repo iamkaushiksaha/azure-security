@@ -1,276 +1,163 @@
-# 🧪 Lab02 – Azure Data Explorer (ADX) Setup for KQL Practice
+# Lab02 – Azure Data Explorer (ADX) Setup for KQL Practice
 
-**Difficulty:** Beginner  
-**Estimated time:** 30–45 minutes  
-**Prerequisites:** Azure account (Free tier is sufficient)
+> **Purpose:** Environment setup + `SigninLogs` ingestion  
+> **Outcome:** Local, Sentinel-like KQL practice environment
 
 ---
 
 ## 🎯 Lab Objective
 
-Set up a **KQL practice environment** using **Azure Data Explorer (ADX)** and Sentinel-style sample data hosted in this GitHub repository.
+This lab demonstrates how to practice **Microsoft Sentinel–style KQL**
+*without requiring a Sentinel workspace*.
 
-This lab helps you practice KQL safely **without deploying Microsoft Sentinel**.
-
----
-
-## 💡 Why Azure Data Explorer?
-
-Azure Data Explorer uses the **same KQL engine** as:
+We use **Azure Data Explorer (ADX)** because it runs the **same KQL engine**
+used by:
 
 - Microsoft Sentinel  
-- Azure Monitor Logs  
-- Microsoft Defender XDR  
+- Log Analytics  
+- Microsoft Defender  
 
-This makes ADX the perfect environment to learn KQL fundamentals.
-
----
-
-## 🧱 Architecture Overview
-
-```text
-GitHub (CSV sample logs)
-        ↓
-Azure Data Explorer (ADX)
-        ↓
-KQL Queries
-        ↓
-Sentinel-style Analysis & Hunting
-```
+This provides a **safe, free, and cost-effective** learning environment.
 
 ---
 
-## 📁 Sample Data Used
+## ❓ Why Azure Data Explorer (ADX)?
 
-All sample datasets are available in this repository:
-
-```text
-sentinel/sampledata/
-```
-
-### Data Mapping
-
-| CSV File | ADX Table | Description |
-|---|---|---|
-| SigninLogs_sample.csv | SigninLogs | Entra ID sign-in activity |
-| AuditLogs_sample.csv | AuditLogs | Directory configuration changes |
-| SecurityEvent_sample.csv | SecurityEvent | Windows security events |
-| AzureActivity_sample.csv | AzureActivity | Azure control-plane actions |
-| OfficeActivity_sample.csv | OfficeActivity | Microsoft 365 user activity |
+- Free tier available  
+- No security data ingestion costs  
+- Full KQL language support  
+- Ideal for experimentation and learning  
 
 ---
 
-## 🆓 Step 1 – Create an Azure Data Explorer Cluster
+## 📋 Prerequisites
 
-1. Open the **Azure Portal**
-2. Search for **Azure Data Explorer**
-3. Click **Create**
-
-### Recommended settings
-
-- **Cluster name:** `sentinel-labs-cluster`
-- **Region:** Any nearby region
-- **Pricing tier:** **Dev/Test (Free)**
-
-> The free tier is sufficient for all labs in this repository.
+- Microsoft account (free)  
+- GitHub access to this repository  
 
 ---
 
-## 🗄️ Step 2 – Create a Database
+## 🧪 Step 1 – Create a Free ADX Cluster
 
-Inside the ADX cluster:
-
-1. Go to **Databases**
-2. Click **Create database**
-
-**Database name:** `SentinelLabs`  
-**Retention:** Default
+1. Go to https://dataexplorer.azure.com  
+2. Sign in with your Microsoft account  
+3. Create a **Free cluster**  
+4. Create a database  
+   - Example name: `SentinelLabs`  
 
 ---
 
-## 📊 Step 3 – Create Sentinel-Style Tables
+## 🧱 Step 2 – Create the `SigninLogs` Table
 
-Open the **Query** blade and run the following commands.
-
-### Create `SigninLogs`
+> Tables **must exist before ingestion** when using `.ingest`.
 
 ```kql
 .create table SigninLogs (
     TimeGenerated: datetime,
     UserPrincipalName: string,
+    UserDisplayName: string,
+    UserId: string,
     AppDisplayName: string,
+    AppId: string,
+    ClientAppUsed: string,
     IPAddress: string,
     Location: string,
+    CorrelationId: string,
     ResultType: string,
-    ResultDescription: string
-)
-```
-
-### Create `AuditLogs`
-
-```kql
-.create table AuditLogs (
-    TimeGenerated: datetime,
-    OperationName: string,
-    InitiatedBy: string,
-    TargetResources: string,
-    Result: string
-)
-```
-
-### Create `SecurityEvent`
-
-```kql
-.create table SecurityEvent (
-    TimeGenerated: datetime,
-    Computer: string,
-    EventID: int,
-    Account: string,
-    Activity: string
-)
-```
-
-### Create `AzureActivity`
-
-```kql
-.create table AzureActivity (
-    TimeGenerated: datetime,
-    OperationName: string,
-    Caller: string,
-    ResourceGroup: string,
-    ActivityStatus: string
-)
-```
-
-### Create `OfficeActivity`
-
-```kql
-.create table OfficeActivity (
-    TimeGenerated: datetime,
-    UserId: string,
-    Operation: string,
-    Workload: string,
-    ClientIP: string
+    ResultDescription: string,
+    RiskLevelAggregated: string,
+    RiskState: string,
+    AuthenticationRequirement: string,
+    AuthenticationMethodsUsed: string,
+    TokenIssuerType: string,
+    ResourceDisplayName: string,
+    IsInteractive: bool,
+    ConditionalAccessStatus: string,
+    DeviceDetail: dynamic,
+    Status: dynamic,
+    Type: string
 )
 ```
 
 ---
 
-## ⬇️ Step 4 – Ingest CSV Data from GitHub
-
-Data is ingested **directly from GitHub raw URLs**, making this lab fully reproducible.
-
-### Ingest `SigninLogs`
+## 📥 Step 3 – Ingest Sample Data from GitHub
 
 ```kql
 .ingest into table SigninLogs
-(@"https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/SigninLogs_sample.csv")
+(
+  @"https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/SigninLogs_sample_important_columns_110rows.csv"
+)
 with (format="csv", ignoreFirstRecord=true)
 ```
-
-### Ingest `AuditLogs`
-
-```kql
-.ingest into table AuditLogs
-(@"https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/AuditLogs_sample.csv")
-with (format="csv", ignoreFirstRecord=true)
-```
-
-### Ingest remaining tables
-
-Repeat the same pattern for:
-
-- `SecurityEvent`  
-  `https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/SecurityEvent_sample.csv`
-- `AzureActivity`  
-  `https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/AzureActivity_sample.csv`
-- `OfficeActivity`  
-  `https://raw.githubusercontent.com/iamkaushiksaha/azure-security/main/sentinel/sampledata/OfficeActivity_sample.csv`
 
 ---
 
-## ✅ Step 5 – Validate Ingestion
+## ✅ Step 4 – Validate Ingestion
 
-### Record count
+Run the following queries to confirm data ingestion:
 
 ```kql
 SigninLogs
 | count
 ```
 
-### Preview data
-
 ```kql
 SigninLogs
 | take 10
 ```
 
-If rows are returned, ingestion was successful.
-
 ---
 
-## 🕵️ Step 6 – First KQL Practice Queries
+## 🧠 Step 5 – First Practice Queries
 
-### Failed sign-ins
+### Failed Sign-ins
 
 ```kql
 SigninLogs
 | where ResultType != "0"
-| summarize FailedAttempts = count() by UserPrincipalName
-| sort by FailedAttempts desc
+| summarize FailedCount = count() by UserPrincipalName
+| sort by FailedCount desc
 ```
 
-### Top IP addresses
+---
+
+### Risky Sign-ins
 
 ```kql
 SigninLogs
-| where ResultType != "0"
-| summarize Attempts = count() by IPAddress
-| sort by Attempts desc
-```
-
-### Azure activity summary
-
-```kql
-AzureActivity
-| summarize count() by OperationName
-| sort by count_ desc
+| where RiskLevelAggregated in ("medium", "high")
+| summarize count() by UserPrincipalName
 ```
 
 ---
 
-## 🛠️ Troubleshooting
+## 🚫 Troubleshooting
 
-### No data returned
+### No Data Returned
+- Wait 1–2 minutes after ingestion  
+- Verify table name spelling  
+- Confirm CSV headers match table schema  
 
-- Wait 1–2 minutes after ingestion
-- Verify table names
-- Check CSV header matches schema
-
-### Ingestion failure
-
-- Verify GitHub raw URL is accessible
-- Re-run the `.ingest` command
-
-### Permission issues
-
-- Ensure you are **Database Admin** on the ADX cluster
+### Permission Errors
+- Ensure you are **Database Admin** on the ADX database  
 
 ---
 
-## 🧠 What You Learned
+## 🎉 Outcome
 
-- How Sentinel-style logs are structured  
-- How KQL behaves on real datasets  
-- How ingestion pipelines work  
-- How analysts validate and explore logs  
+You now have:
+
+- A safe KQL lab environment  
+- Sentinel-like `SigninLogs` data  
+- A reusable setup for:
+  - Threat hunting  
+  - Detection development  
+  - Query experimentation  
 
 ---
 
 ## 🚀 What’s Next
 
-- **Lab01 – KQL Foundations**
-- **Lab03 – KQL Hunting Queries (MITRE-mapped)**
-
-You now have a **solid KQL practice environment**.
-
+Proceed to **Lab03** to start writing structured hunting queries
+and applying detection logic.
