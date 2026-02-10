@@ -195,5 +195,8 @@ SigninLogs
 - Cross-table correlation  
 
 ---
+reference link
+https://learn.microsoft.com/en-us/kusto/query/tutorials/learn-common-operators?view=microsoft-sentinel
 
 > **Status:** Enterprise-ready • Training-grade • GitHub compatible
+
