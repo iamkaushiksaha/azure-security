@@ -1,0 +1,102 @@
+
+TimeGenerated,HostName,UserPrincipalName,AccountName,CorrelationId,ProcessName,CommandLine,Status
+2026-02-01 08:42:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 08:46:00,HOST01,user1@contoso.com,user1,session_01,powershell,Invoke-Command,Executed
+2026-02-01 08:50:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 08:54:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 08:58:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 09:02:00,HOST01,user1@contoso.com,user1,session_01,powershell,Invoke-Command,Executed
+2026-02-01 09:06:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 09:10:00,HOST01,user1@contoso.com,user1,session_01,powershell,Invoke-Command,Executed
+2026-02-01 09:14:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-01 09:18:00,HOST01,user1@contoso.com,user1,session_01,powershell,Get-Process,Executed
+2026-02-02 08:42:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 08:46:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 08:50:00,HOST02,user2@contoso.com,user2,session_02,powershell,Invoke-Command,Executed
+2026-02-02 08:54:00,HOST02,user2@contoso.com,user2,session_02,powershell,Invoke-Command,Executed
+2026-02-02 08:58:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 09:02:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 09:06:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 09:10:00,HOST02,user2@contoso.com,user2,session_02,powershell,Start-Process cmd.exe,Executed
+2026-02-02 09:14:00,HOST02,user2@contoso.com,user2,session_02,powershell,Get-Process,Executed
+2026-02-02 09:18:00,HOST02,user2@contoso.com,user2,session_02,powershell,Invoke-Command,Executed
+2026-02-03 08:42:00,HOST03,user3@contoso.com,user3,session_03,powershell,Get-Process,Executed
+2026-02-03 08:46:00,HOST03,user3@contoso.com,user3,session_03,powershell,Get-Process,Executed
+2026-02-03 08:50:00,HOST03,user3@contoso.com,user3,session_03,powershell,Get-Process,Executed
+2026-02-03 08:54:00,HOST03,user3@contoso.com,user3,session_03,powershell,Start-Process cmd.exe,Executed
+2026-02-03 08:58:00,HOST03,user3@contoso.com,user3,session_03,powershell,Invoke-Command,Executed
+2026-02-03 09:02:00,HOST03,user3@contoso.com,user3,session_03,powershell,Start-Process cmd.exe,Executed
+2026-02-03 09:06:00,HOST03,user3@contoso.com,user3,session_03,powershell,Invoke-Command,Executed
+2026-02-03 09:10:00,HOST03,user3@contoso.com,user3,session_03,powershell,Invoke-Command,Executed
+2026-02-03 09:14:00,HOST03,user3@contoso.com,user3,session_03,powershell,Start-Process cmd.exe,Executed
+2026-02-03 09:18:00,HOST03,user3@contoso.com,user3,session_03,powershell,Start-Process cmd.exe,Executed
+2026-02-04 08:42:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-04 08:46:00,HOST04,user4@contoso.com,user4,session_04,powershell,Invoke-Command,Executed
+2026-02-04 08:50:00,HOST04,user4@contoso.com,user4,session_04,powershell,Start-Process cmd.exe,Executed
+2026-02-04 08:54:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-04 08:58:00,HOST04,user4@contoso.com,user4,session_04,powershell,Invoke-Command,Executed
+2026-02-04 09:02:00,HOST04,user4@contoso.com,user4,session_04,powershell,Start-Process cmd.exe,Executed
+2026-02-04 09:06:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-04 09:10:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-04 09:14:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-04 09:18:00,HOST04,user4@contoso.com,user4,session_04,powershell,Get-Process,Executed
+2026-02-05 08:42:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 08:46:00,HOST05,user5@contoso.com,user5,session_05,powershell,Start-Process cmd.exe,Executed
+2026-02-05 08:50:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 08:54:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 08:58:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 09:02:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 09:06:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 09:10:00,HOST05,user5@contoso.com,user5,session_05,powershell,Start-Process cmd.exe,Executed
+2026-02-05 09:14:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-05 09:18:00,HOST05,user5@contoso.com,user5,session_05,powershell,Get-Process,Executed
+2026-02-06 08:42:00,HOST06,user6@contoso.com,user6,session_06,powershell,Start-Process cmd.exe,Executed
+2026-02-06 08:46:00,HOST06,user6@contoso.com,user6,session_06,powershell,Start-Process cmd.exe,Executed
+2026-02-06 08:50:00,HOST06,user6@contoso.com,user6,session_06,powershell,Get-Process,Executed
+2026-02-06 08:54:00,HOST06,user6@contoso.com,user6,session_06,powershell,Invoke-Command,Executed
+2026-02-06 08:58:00,HOST06,user6@contoso.com,user6,session_06,powershell,Get-Process,Executed
+2026-02-06 09:02:00,HOST06,user6@contoso.com,user6,session_06,powershell,Start-Process cmd.exe,Executed
+2026-02-06 09:06:00,HOST06,user6@contoso.com,user6,session_06,powershell,Start-Process cmd.exe,Executed
+2026-02-06 09:10:00,HOST06,user6@contoso.com,user6,session_06,powershell,Get-Process,Executed
+2026-02-06 09:14:00,HOST06,user6@contoso.com,user6,session_06,powershell,Invoke-Command,Executed
+2026-02-06 09:18:00,HOST06,user6@contoso.com,user6,session_06,powershell,Start-Process cmd.exe,Executed
+2026-02-07 08:42:00,HOST07,user7@contoso.com,user7,session_07,powershell,Start-Process cmd.exe,Executed
+2026-02-07 08:46:00,HOST07,user7@contoso.com,user7,session_07,powershell,Start-Process cmd.exe,Executed
+2026-02-07 08:50:00,HOST07,user7@contoso.com,user7,session_07,powershell,Invoke-Command,Executed
+2026-02-07 08:54:00,HOST07,user7@contoso.com,user7,session_07,powershell,Invoke-Command,Executed
+2026-02-07 08:58:00,HOST07,user7@contoso.com,user7,session_07,powershell,Start-Process cmd.exe,Executed
+2026-02-07 09:02:00,HOST07,user7@contoso.com,user7,session_07,powershell,Get-Process,Executed
+2026-02-07 09:06:00,HOST07,user7@contoso.com,user7,session_07,powershell,Get-Process,Executed
+2026-02-07 09:10:00,HOST07,user7@contoso.com,user7,session_07,powershell,Get-Process,Executed
+2026-02-07 09:14:00,HOST07,user7@contoso.com,user7,session_07,powershell,Get-Process,Executed
+2026-02-07 09:18:00,HOST07,user7@contoso.com,user7,session_07,powershell,Get-Process,Executed
+2026-02-08 08:42:00,HOST08,user8@contoso.com,user8,session_08,powershell,Invoke-Command,Executed
+2026-02-08 08:46:00,HOST08,user8@contoso.com,user8,session_08,powershell,Invoke-Command,Executed
+2026-02-08 08:50:00,HOST08,user8@contoso.com,user8,session_08,powershell,Start-Process cmd.exe,Executed
+2026-02-08 08:54:00,HOST08,user8@contoso.com,user8,session_08,powershell,Start-Process cmd.exe,Executed
+2026-02-08 08:58:00,HOST08,user8@contoso.com,user8,session_08,powershell,Get-Process,Executed
+2026-02-08 09:02:00,HOST08,user8@contoso.com,user8,session_08,powershell,Get-Process,Executed
+2026-02-08 09:06:00,HOST08,user8@contoso.com,user8,session_08,powershell,Invoke-Command,Executed
+2026-02-08 09:10:00,HOST08,user8@contoso.com,user8,session_08,powershell,Invoke-Command,Executed
+2026-02-08 09:14:00,HOST08,user8@contoso.com,user8,session_08,powershell,Invoke-Command,Executed
+2026-02-08 09:18:00,HOST08,user8@contoso.com,user8,session_08,powershell,Get-Process,Executed
+2026-02-09 08:42:00,HOST09,user9@contoso.com,user9,session_09,powershell,Start-Process cmd.exe,Executed
+2026-02-09 08:46:00,HOST09,user9@contoso.com,user9,session_09,powershell,Invoke-Command,Executed
+2026-02-09 08:50:00,HOST09,user9@contoso.com,user9,session_09,powershell,Invoke-Command,Executed
+2026-02-09 08:54:00,HOST09,user9@contoso.com,user9,session_09,powershell,Get-Process,Executed
+2026-02-09 08:58:00,HOST09,user9@contoso.com,user9,session_09,powershell,Invoke-Command,Executed
+2026-02-09 09:02:00,HOST09,user9@contoso.com,user9,session_09,powershell,Invoke-Command,Executed
+2026-02-09 09:06:00,HOST09,user9@contoso.com,user9,session_09,powershell,Start-Process cmd.exe,Executed
+2026-02-09 09:10:00,HOST09,user9@contoso.com,user9,session_09,powershell,Get-Process,Executed
+2026-02-09 09:14:00,HOST09,user9@contoso.com,user9,session_09,powershell,Invoke-Command,Executed
+2026-02-09 09:18:00,HOST09,user9@contoso.com,user9,session_09,powershell,Start-Process cmd.exe,Executed
+2026-02-10 08:42:00,HOST10,user10@contoso.com,user10,session_10,powershell,Start-Process cmd.exe,Executed
+2026-02-10 08:46:00,HOST10,user10@contoso.com,user10,session_10,powershell,Get-Process,Executed
+2026-02-10 08:50:00,HOST10,user10@contoso.com,user10,session_10,powershell,Get-Process,Executed
+2026-02-10 08:54:00,HOST10,user10@contoso.com,user10,session_10,powershell,Invoke-Command,Executed
+2026-02-10 08:58:00,HOST10,user10@contoso.com,user10,session_10,powershell,Start-Process cmd.exe,Executed
+2026-02-10 09:02:00,HOST10,user10@contoso.com,user10,session_10,powershell,Start-Process cmd.exe,Executed
+2026-02-10 09:06:00,HOST10,user10@contoso.com,user10,session_10,powershell,Get-Process,Executed
+2026-02-10 09:10:00,HOST10,user10@contoso.com,user10,session_10,powershell,Invoke-Command,Executed
+2026-02-10 09:14:00,HOST10,user10@contoso.com,user10,session_10,powershell,Invoke-Command,Executed
+2026-02-10 09:18:00,HOST10,user10@contoso.com,user10,session_10,powershell,Start-Process cmd.exe,Executed
