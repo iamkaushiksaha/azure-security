@@ -1,202 +1,213 @@
-# KQL Basics  
-### A Practical Foundation for Microsoft Sentinel Analysts
+# Stage 01 · Basics — Learn to *think* in KQL
 
-> **Audience:** SOC Tier 1–2 Analysts, Threat Hunters, Detection Engineers  
-> **Goal:** Learn how to *think* in KQL — not just copy queries
-
----
-
-## 🎯 Why This Module Exists
-
-Kusto Query Language (**KQL**) is the backbone of **Microsoft Sentinel**, **Azure Monitor**, and **Microsoft Defender** analytics.
-
-Many analysts struggle not because KQL is complex —  
-but because they approach it as **syntax**, not **logic**.
-
-This guide helps you:
-
-- Build a strong **mental model** for KQL  
-- Understand how Sentinel data behaves at scale  
-- Write queries that are **efficient, readable, and reusable**  
+> **Audience:** complete beginners and SOC Tier 1 analysts.
+> **Goal:** read and write KQL as a sequence of transformations — not memorise snippets.
+> **Prerequisite:** finish [Stage 00 · Setup](../setup/README.md) so `DemoIdentityLogs` exists. Every query here runs against it, so you'll see real results immediately.
 
 ---
 
-## 📊 Dataset Used Throughout This Guide
+## 1. What KQL is
 
-We use **`SigninLogs`** as the primary dataset because it is:
+Kusto Query Language (**KQL**) is a **read-only** language for exploring large volumes of log/telemetry data. It powers **Microsoft Sentinel**, **Azure Monitor / Log Analytics**, **Microsoft Defender**, and **Azure Data Explorer** — learn it once, use it everywhere.
+Reference: [KQL overview](https://learn.microsoft.com/en-us/kusto/query/?view=microsoft-sentinel)
 
-- One of the most security-critical Sentinel tables  
-- Rich in identity, network, application, and risk signals  
-- Reusable across hunting, detections, and investigations  
+## 2. The mental model: a pipeline
 
-> Mastering `SigninLogs` makes every other Sentinel table easier.
-
----
-
-## 🔍 What Is KQL?
-
-KQL is a **read-only query language** designed for **high-volume telemetry**.
-
-It is optimized for:
-
-- Log analytics  
-- Threat hunting  
-- Telemetry exploration  
-- Security investigations  
-
-Used across:
-
-- Microsoft Sentinel  
-- Azure Data Explorer (ADX)  
-- Log Analytics  
-- Microsoft Defender  
-
----
-
-## 🧠 How to Think in KQL (Mental Model)
-
-KQL queries execute **left → right**.  
-Each line transforms the output of the previous one.
+A KQL query starts with a **table** and flows **top-to-bottom** through `|` (pipe) operators. Each operator takes the rows from the line above and transforms them.
 
 ```text
-Table
-| Filter
-| Transform
-| Aggregate
-| Sort / Project
+TableName          ← start with a data source
+| where ...        ← filter rows (cut noise early)
+| extend ...       ← add computed columns
+| summarize ...    ← aggregate / group
+| sort by ...      ← order
+| project ...      ← choose columns to display
 ```
 
-### Example: Reading a Query Like a Sentence
+Read this query like a sentence — *"take DemoIdentityLogs, keep only failed sign-ins, count them per user, show the worst first"*:
 
-```kql
-SigninLogs
-| where ResultType != "0"
+```kusto
+DemoIdentityLogs
+| where EventType == "Signin"
+| where ResultType != 0
 | summarize FailedAttempts = count() by UserPrincipalName
 | sort by FailedAttempts desc
 ```
 
+> **Golden rule:** filter **early**. The sooner you cut rows with `where`, the faster and cheaper the query.
+
+## 3. Always start with `take`
+
+Before writing logic, look at the shape of the data. `take` grabs a few arbitrary rows so you can see the columns and values safely:
+
+```kusto
+DemoIdentityLogs
+| take 10
+```
+
+## 4. Filtering with `where`
+
+`where` keeps only rows that match a condition.
+
+```kusto
+// Only sign-in events
+DemoIdentityLogs
+| where EventType == "Signin"
+```
+
+```kusto
+// Only FAILED sign-ins (ResultType is an int in the demo set; 0 = success)
+DemoIdentityLogs
+| where EventType == "Signin"
+| where ResultType != 0
+```
+
+Common operators inside `where`:
+
+| Operator | Meaning | Example |
+|---|---|---|
+| `==`, `!=` | exact equality (case-sensitive) | `EventType == "Audit"` |
+| `=~`, `!~` | equality, **case-insensitive** | `Location =~ "germany"` |
+| `in`, `!in` | match any value in a list | `ResultType in (50126, 50053)` |
+| `contains`, `has` | substring / whole-token match | `ResultDescription has "password"` |
+| `>`, `<`, `>=` | comparisons (numbers, dates) | `TimeGenerated > ago(1d)` |
+
+> `has` is **faster** than `contains` — it matches whole tokens and uses the index. Prefer `has` when you can.
+> Reference: [String operators](https://learn.microsoft.com/en-us/kusto/query/datatypes-string-operators?view=microsoft-sentinel)
+
+## 5. Time filtering & query hygiene
+
+Every real investigation starts with **time**. `ago()` is a relative time expression.
+
+```kusto
+DemoIdentityLogs
+| where TimeGenerated > ago(7d)
+```
+
+> ⚠️ Forgetting a time filter is the #1 cause of slow, expensive queries on real data. Make it a reflex.
+> Reference: [ago() function](https://learn.microsoft.com/en-us/kusto/query/ago-function?view=microsoft-sentinel)
+
+## 6. Choosing columns with `project`
+
+`project` selects (and orders, and renames) the columns you want to see. It makes results readable.
+
+```kusto
+DemoIdentityLogs
+| where EventType == "Signin"
+| where ResultType != 0
+| project TimeGenerated, UserPrincipalName, IPAddress, AppDisplayName, ResultDescription
+```
+
+Related: `project-away` removes columns; `project-rename` renames them.
+
+## 7. Adding logic with `extend`
+
+`extend` creates a **new computed column** from existing data.
+
+```kusto
+DemoIdentityLogs
+| where EventType == "Signin"
+| extend Outcome = iff(ResultType == 0, "Success", "Failure")
+| project TimeGenerated, UserPrincipalName, Outcome, ResultDescription
+```
+
+`iff(condition, valueIfTrue, valueIfFalse)` is the inline if. For many branches, use `case()`.
+Reference: [iff()](https://learn.microsoft.com/en-us/kusto/query/iff-function?view=microsoft-sentinel) · [case()](https://learn.microsoft.com/en-us/kusto/query/case-function?view=microsoft-sentinel)
+
+## 8. Reusable values with `let`
+
+`let` names a value or a sub-result so you don't repeat yourself and the intent is clear.
+
+```kusto
+let lookback = 7d;
+let failureCodes = dynamic([50126, 50053, 50057, 50055]);
+DemoIdentityLogs
+| where EventType == "Signin"
+| where TimeGenerated > ago(lookback)
+| where ResultType in (failureCodes)
+| project TimeGenerated, UserPrincipalName, ResultType, ResultDescription, IPAddress, Location
+| sort by TimeGenerated desc
+```
+
+Reference: [let statement](https://learn.microsoft.com/en-us/kusto/query/let-statement?view=microsoft-sentinel)
+
+## 9. Free-text search with `search`
+
+When you don't know which column holds a value, `search` scans them all. Great for exploration, slower than a targeted `where` — switch to `where` once you know the column.
+
+```kusto
+DemoIdentityLogs
+| search "Failure"
+```
+
 ---
 
-## 🧩 Core Operators Every Analyst Must Know
+## Core operators to memorise
 
-| Operator | Why It Matters |
-|--------|---------------|
+| Operator | Why it matters |
+|---|---|
 | `where` | Reduce noise early |
-| `project` | Improve readability |
-| `extend` | Add calculated logic |
-| `summarize` | Reveal patterns |
-| `count()` | Measure activity |
-| `sort by` | Prioritize results |
-| `parse_json()` | Extract dynamic data |
-| `tostring()` | Normalize types |
-| `distinct` | Identify uniqueness |
-| `take` | Safely explore data |
+| `project` / `project-away` | Control which columns show |
+| `extend` | Add calculated columns |
+| `summarize` | Aggregate (next stage) |
+| `sort by` (`order by`) | Prioritise results |
+| `take` / `limit` | Sample data safely |
+| `search` | Explore when you don't know the column |
+| `let` | Reuse values, self-document |
 
 ---
 
-## 🧱 Key Columns from `SigninLogs`
+## 🧪 Exercises
 
-| Column | Why It Matters |
-|------|---------------|
-| `TimeGenerated` | Timeline reconstruction |
-| `UserPrincipalName` | Identity tracking |
-| `IPAddress` | Network analysis |
-| `AppDisplayName` | Application abuse |
-| `ClientAppUsed` | Legacy auth risk |
-| `Location` | Geo anomalies |
-| `ResultType` | Success vs failure |
-| `ResultDescription` | Failure context |
-| `CorrelationId` | Session tracing |
-| `RiskLevelAggregated` | Identity risk |
+Try these against `DemoIdentityLogs` before peeking at the answers.
 
----
+1. Show only the **audit** events, newest first, displaying time, user, operation, and result.
+2. List every **failed** sign-in from a `medium` or `high` risk level.
+3. For sign-ins, add a column `Country` equal to `Location`, and show only sign-ins **not** from the United States.
+4. Find any record (sign-in or audit) that mentions the word `password`.
 
-## ⏱️ Time Filtering & Query Hygiene
+<details>
+<summary><b>Answers</b></summary>
 
-Every investigation should start with **time**.
-
-```kql
-SigninLogs
-| where TimeGenerated > ago(24h)
+```kusto
+-- 1
+DemoIdentityLogs
+| where EventType == "Audit"
+| project TimeGenerated, UserPrincipalName, OperationName, AuditResult
+| sort by TimeGenerated desc
 ```
-
-> ⚠️ Missing time filters often leads to slow or misleading queries.
-
----
-
-## 🚫 Common Beginner Mistakes
-
-- Filtering before understanding columns  
-- Forgetting `TimeGenerated`  
-- Using `project *` on large datasets  
-- Copy-pasting queries blindly  
-
----
-
-## ✅ Best Practice: Start Like This
-
-```kql
-SigninLogs
-| take 10
+```kusto
+-- 2
+DemoIdentityLogs
+| where EventType == "Signin"
+| where ResultType != 0
+| where RiskLevelDuringSignIn in ("medium", "high")
+| project TimeGenerated, UserPrincipalName, IPAddress, RiskLevelDuringSignIn, ResultDescription
 ```
-
-This helps you understand schema, values, and behavior safely.
+```kusto
+-- 3
+DemoIdentityLogs
+| where EventType == "Signin"
+| extend Country = Location
+| where Country != "United States"
+| project TimeGenerated, UserPrincipalName, Country, AppDisplayName
+```
+```kusto
+-- 4
+DemoIdentityLogs
+| search "password"
+```
+</details>
 
 ---
 
-## 🧭 Recommended Query Development Flow
+## Common beginner mistakes
 
-```text
-Table
-| take 10
-| where TimeGenerated > ago(24h)
-| where <condition>
-| summarize <aggregation>
-| sort by <field>
-```
+- Filtering before you understand the columns → always `take 10` first.
+- Forgetting `TimeGenerated` filters → slow queries on real data.
+- Using `==` when the real `SigninLogs.ResultType` needs `"0"` (string) → see [schema-gotchas](../reference/schema-gotchas.md).
+- Copy-pasting queries without reading them line by line.
 
----
+**Next:** [Stage 02 · Aggregation & Visualization](../aggregation-viz/README.md) — turn rows into insight with `summarize`, `bin()`, and `render`.
 
-## 🧪 Practical Examples
-
-### Failed Sign-ins by User
-
-```kql
-SigninLogs
-| where ResultType != "0"
-| summarize Failed = count() by UserPrincipalName
-| sort by Failed desc
-```
-
-### Suspicious IP Addresses
-
-```kql
-SigninLogs
-| where ResultType != "0"
-| summarize Attempts = count() by IPAddress
-| sort by Attempts desc
-```
-
-### Legacy Authentication Usage
-
-```kql
-SigninLogs
-| where ClientAppUsed !in ("Browser", "Mobile Apps and Desktop clients")
-| summarize count() by ClientAppUsed
-```
-
----
-
-## 🚀 What Comes Next
-
-- Lab02 – Azure Data Explorer setup  
-- MITRE-mapped hunting queries  
-- Detection rule engineering  
-- Cross-table correlation  
-
----
-reference link
-https://learn.microsoft.com/en-us/kusto/query/tutorials/learn-common-operators?view=microsoft-sentinel
-
-> **Status:** Enterprise-ready • Training-grade • GitHub compatible
-
+Reference hub: [Learn common KQL operators](https://learn.microsoft.com/en-us/kusto/query/tutorials/learn-common-operators?view=microsoft-sentinel)

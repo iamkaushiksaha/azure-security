@@ -1,0 +1,48 @@
+// =============================================================================
+// load-into-adx.kql
+// Command-line alternative to the "Get data" UI for the ADX free cluster.
+// Run these control commands (the ones starting with ".") in your free cluster:
+//   https://aka.ms/kustofree   ->   https://dataexplorer.azure.com
+//
+// After running, every basics/ and aggregation-viz/ lab works unchanged, because
+// the DemoIdentityLogs() function below rebases time to now() just like the
+// Log Analytics version.
+// =============================================================================
+
+// 1) Create the raw landing table (Offset stays a string; we convert it later).
+.create table DemoIdentityLogsRaw (
+    Offset:string,
+    EventType:string,
+    UserPrincipalName:string,
+    IPAddress:string,
+    AppDisplayName:string,
+    ResultType:int,
+    ResultDescription:string,
+    RiskLevelDuringSignIn:string,
+    Location:string,
+    OperationName:string,
+    AuditResult:string,
+    Category:string
+)
+
+// 2) Ingest the CSV.
+//    EASIEST: use the web UI instead -> right-click the database > Get data >
+//    Local file > select demo_identity_logs.csv > tick "First row header" > Finish.
+//
+//    Or, if the CSV is reachable at a URL, ingest directly (ignoreFirstRecord
+//    skips the header row):
+// .ingest into table DemoIdentityLogsRaw (
+//     h'https://<your-blob-or-raw-github-url>/demo_identity_logs.csv'
+// ) with (format='csv', ignoreFirstRecord=true)
+
+// 3) Create the query-time function that rebases TimeGenerated to "now".
+//    This is what makes ago(7d) filters in the labs work against fixed offsets.
+.create-or-alter function DemoIdentityLogs() {
+    DemoIdentityLogsRaw
+    | extend TimeGenerated = now() - totimespan(Offset)
+    | project-away Offset
+}
+
+// 4) Verify.
+DemoIdentityLogs
+| take 10

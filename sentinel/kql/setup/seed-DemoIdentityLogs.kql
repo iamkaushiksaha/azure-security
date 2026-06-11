@@ -1,0 +1,83 @@
+// =============================================================================
+// seed-DemoIdentityLogs.kql
+// A reusable demo dataset for practising KQL WITHOUT waiting for log ingestion.
+//
+// Why: most learners have an empty or near-empty Sentinel / Log Analytics
+// workspace, so real tables (SigninLogs, AuditLogs) return nothing. This seeds
+// a deterministic dataset and saves it as a FUNCTION named DemoIdentityLogs,
+// which then behaves like a queryable table in every later lab.
+//
+// One dataset, five users (alexw, meganb, sophial, jamest, itadmin), two event
+// types (Signin + Audit). TimeGenerated is rebased to now() each run, so the
+// rows always fall inside your selected time range.
+//
+// ResultType note:
+//   - In THIS seeded dataset ResultType is an INT  -> use  ResultType != 0
+//   - In the REAL SigninLogs table ResultType is a STRING -> use ResultType != "0"
+//   (See ../reference/schema-gotchas.md)
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// METHOD A — Microsoft Sentinel / Log Analytics  (and also works in ADX)
+// Paste into Logs (KQL mode), Run, then Save > Save as function:
+//   Function name : DemoIdentityLogs
+//   Category      : Functions
+// -----------------------------------------------------------------------------
+datatable(
+    Offset:timespan,
+    EventType:string,
+    UserPrincipalName:string,
+    IPAddress:string,
+    AppDisplayName:string,
+    ResultType:int,
+    ResultDescription:string,
+    RiskLevelDuringSignIn:string,
+    Location:string,
+    OperationName:string,
+    AuditResult:string,
+    Category:string
+)
+[
+    time(06:00:00), "Signin", "alexw@contoso.com",   "52.170.12.45",   "Azure Portal",                0,     "Success",                       "none",   "United States",  "", "", "",
+    time(05:55:00), "Signin", "alexw@contoso.com",   "185.220.101.2",  "Microsoft Graph",             50126, "Invalid username or password",  "medium", "Netherlands",    "", "", "",
+    time(05:50:00), "Signin", "alexw@contoso.com",   "185.220.101.2",  "Microsoft Graph",             50126, "Invalid username or password",  "medium", "Netherlands",    "", "", "",
+    time(05:45:00), "Signin", "alexw@contoso.com",   "185.220.101.2",  "Azure Portal",                50053, "Account locked",                "high",   "Netherlands",    "", "", "",
+    time(05:40:00), "Signin", "meganb@contoso.com",  "20.98.111.30",   "Office 365 Exchange Online",  0,     "Success",                       "none",   "United Kingdom", "", "", "",
+    time(05:35:00), "Signin", "meganb@contoso.com",  "20.98.111.30",   "Microsoft Teams",             0,     "Success",                       "none",   "United Kingdom", "", "", "",
+    time(05:30:00), "Signin", "sophial@contoso.com", "13.69.54.88",    "SharePoint Online",           50057, "User account disabled",         "high",   "Germany",        "", "", "",
+    time(05:25:00), "Signin", "sophial@contoso.com", "13.69.54.88",    "SharePoint Online",           50055, "Password expired",              "medium", "Germany",        "", "", "",
+    time(05:20:00), "Signin", "jamest@contoso.com",  "40.74.25.67",    "Azure Portal",                0,     "Success",                       "none",   "United States",  "", "", "",
+    time(05:15:00), "Signin", "jamest@contoso.com",  "40.74.25.67",    "Microsoft Graph",             50126, "Invalid username or password",  "low",    "United States",  "", "", "",
+    time(05:10:00), "Signin", "jamest@contoso.com",  "40.74.25.67",    "Microsoft Graph",             0,     "Success",                       "none",   "United States",  "", "", "",
+    time(05:05:00), "Signin", "itadmin@contoso.com", "104.46.92.14",   "Azure Portal",                0,     "Success",                       "none",   "India",          "", "", "",
+    time(05:00:00), "Audit",  "itadmin@contoso.com", "", "", -1, "", "", "", "Add member to group",            "Success", "GroupManagement",
+    time(04:55:00), "Audit",  "itadmin@contoso.com", "", "", -1, "", "", "", "Update user",                    "Success", "UserManagement",
+    time(04:50:00), "Audit",  "itadmin@contoso.com", "", "", -1, "", "", "", "Reset user password",            "Success", "UserManagement",
+    time(04:45:00), "Audit",  "alexw@contoso.com",   "", "", -1, "", "", "", "Add app role assignment to user","Failure", "ApplicationManagement",
+    time(04:40:00), "Audit",  "alexw@contoso.com",   "", "", -1, "", "", "", "Add app role assignment to user","Failure", "ApplicationManagement",
+    time(04:35:00), "Audit",  "meganb@contoso.com",  "", "", -1, "", "", "", "Update group",                   "Success", "GroupManagement",
+    time(04:30:00), "Audit",  "sophial@contoso.com", "", "", -1, "", "", "", "Delete application",             "Failure", "ApplicationManagement",
+    time(04:25:00), "Audit",  "jamest@contoso.com",  "", "", -1, "", "", "", "Consent to application",         "Success", "ApplicationManagement"
+]
+| extend TimeGenerated = now() - Offset
+| project-away Offset
+
+
+// -----------------------------------------------------------------------------
+// METHOD B — Azure Data Explorer (free cluster) as a stored function
+// If you prefer a persistent function in ADX instead of CSV ingestion, run the
+// control command below in your free cluster (https://aka.ms/kustofree).
+// Then query it with:  DemoIdentityLogs | take 10
+// -----------------------------------------------------------------------------
+// .create-or-alter function DemoIdentityLogs() {
+//     datatable(Offset:timespan, EventType:string, UserPrincipalName:string,
+//         IPAddress:string, AppDisplayName:string, ResultType:int,
+//         ResultDescription:string, RiskLevelDuringSignIn:string, Location:string,
+//         OperationName:string, AuditResult:string, Category:string)
+//     [
+//         // ... paste the same 20 rows as above ...
+//     ]
+//     | extend TimeGenerated = now() - Offset
+//     | project-away Offset
+// }
