@@ -65,11 +65,11 @@ Career starters & students · SOC Tier 1–2 analysts · threat hunters · detec
 
 | Stage | Folder | What you learn | Runs on |
 |---|---|---|---|
-| **00 · Setup** | [`setup/`](setup/README.md) | Seed a dataset 2 ways (function / CSV+ADX) | — |
-| **01 · Basics** | [`basics/`](basics/README.md) | Pipeline model, `where`, `project`, `extend`, `let`, time hygiene | `DemoIdentityLogs` |
-| **02 · Aggregation & Viz** | [`aggregation-viz/`](aggregation-viz/README.md) | `summarize` family, `bin()`, `render`, `union`, `join` | `DemoIdentityLogs` |
-| **03 · Advanced** | [`advanced/`](advanced/README.md) | Parsing dynamic data, modular `let`, ASIM, viz shaping, series ops | Real tables |
-| **04 · Threat Hunting** | [`hunting/`](hunting/README.md) | 11 MITRE-mapped hunts across identity + endpoint | Real tables |
+| **00 · Setup** | [`00-setup/`](00-setup/README.md) | Seed a dataset 2 ways (function / CSV+ADX) | — |
+| **01 · Basics** | [`01-basics/`](01-basics/README.md) | Pipeline model, `where`, `project`, `extend`, `let`, time hygiene | `DemoIdentityLogs` |
+| **02 · Aggregation & Viz** | [`02-aggregation-viz/`](02-aggregation-viz/README.md) | `summarize` family, `bin()`, `render`, `union`, `join` | `DemoIdentityLogs` |
+| **03 · Advanced** | [`03-advanced/`](03-advanced/README.md) | Parsing dynamic data, modular `let`, ASIM, viz shaping, series ops | Real tables |
+| **04 · Threat Hunting** | [`04-hunting/`](04-hunting/README.md) | 11 MITRE-mapped hunts across identity + endpoint | Real tables |
 
 ## 📚 Reference (use anytime)
 - [`reference/kql-operator-cheatsheet.md`](reference/kql-operator-cheatsheet.md) — fast operator lookup

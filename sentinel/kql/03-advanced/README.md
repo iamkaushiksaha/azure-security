@@ -1,7 +1,7 @@
 # Stage 03 · Advanced KQL — Production techniques
 
 > **Audience:** SOC analysts advancing to threat hunting, detection engineers, architects.
-> **Tables:** this stage uses the **real** Sentinel tables (`SigninLogs`, `AuditLogs`, `SecurityEvent`, …). They return data only where the relevant connector is ingesting. If your workspace is empty, study the patterns here and adapt them to `DemoIdentityLogs`, or practise in an [ADX free cluster](../setup/README.md#method-2--azure-data-explorer-free-cluster--csv).
+> **Tables:** this stage uses the **real** Sentinel tables (`SigninLogs`, `AuditLogs`, `SecurityEvent`, …). They return data only where the relevant connector is ingesting. If your workspace is empty, study the patterns here and adapt them to `DemoIdentityLogs`, or practise in an [ADX free cluster](../00-setup/README.md#method-2--azure-data-explorer-free-cluster--csv).
 
 > ⚠️ **Real-table reminder:** in `SigninLogs`, `ResultType` is a **string** — use `ResultType != "0"`, not `!= 0`. (It's an int only in the demo set.) [SigninLogs reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/signinlogs)
 
@@ -269,4 +269,4 @@ _Im_Authentication(starttime=ago(24h), eventresult='Failure')
 
 ---
 
-**Next:** [Stage 04 · Threat Hunting](../hunting/README.md) — MITRE-mapped hunts across identity and endpoint.
+**Next:** [Stage 04 · Threat Hunting](../04-hunting/README.md) — MITRE-mapped hunts across identity and endpoint.

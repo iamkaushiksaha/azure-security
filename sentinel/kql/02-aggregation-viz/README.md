@@ -1,7 +1,7 @@
 # Stage 02 · Aggregation & Visualization — Turn rows into insight
 
 > **Goal:** group, count, and chart data with `summarize`, `bin()`, and `render`, then correlate across event types with `union` and `join`.
-> **Prerequisite:** `DemoIdentityLogs` from [Stage 00](../setup/README.md). All queries run against it.
+> **Prerequisite:** `DemoIdentityLogs` from [Stage 00](../00-setup/README.md). All queries run against it.
 
 ---
 
@@ -161,7 +161,7 @@ DemoIdentityLogs
 | sort by TimeGenerated desc
 ```
 
-Join flavours you'll meet: `inner` (only matches), `leftouter` (all left + matches — enrichment), `leftanti` (left rows with **no** match — "find what's missing"). Full treatment in [Stage 03](../advanced/README.md).
+Join flavours you'll meet: `inner` (only matches), `leftouter` (all left + matches — enrichment), `leftanti` (left rows with **no** match — "find what's missing"). Full treatment in [Stage 03](../03-advanced/README.md).
 Reference: [join operator](https://learn.microsoft.com/en-us/kusto/query/join-operator?view=microsoft-sentinel)
 
 ---
@@ -208,4 +208,4 @@ DemoIdentityLogs
 
 ---
 
-**Next:** [Stage 03 · Advanced](../advanced/README.md) — parsing dynamic data, modular `let`, ASIM parsers, and visualization shaping on the **real** tables.
+**Next:** [Stage 03 · Advanced](../03-advanced/README.md) — parsing dynamic data, modular `let`, ASIM parsers, and visualization shaping on the **real** tables.

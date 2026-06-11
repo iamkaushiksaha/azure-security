@@ -1,7 +1,7 @@
 # Stage 04 · Threat Hunting with KQL — MITRE-mapped hunts
 
 > **Audience:** threat hunters and detection engineers.
-> **Tables:** real Sentinel / Defender XDR tables. Each hunt notes the table it needs and the connector that fills it. No data yet? Read the patterns, then practise the *shape* on `DemoIdentityLogs` or an [ADX free cluster](../setup/README.md).
+> **Tables:** real Sentinel / Defender XDR tables. Each hunt notes the table it needs and the connector that fills it. No data yet? Read the patterns, then practise the *shape* on `DemoIdentityLogs` or an [ADX free cluster](../00-setup/README.md).
 > **Mapping:** every hunt is tagged with its [MITRE ATT&CK](https://attack.mitre.org/) technique so you can tie findings to a framework.
 
 Every column below was schema-validated against Microsoft Learn (see [`../reference/ms-reference-links.md`](../reference/ms-reference-links.md)). General hunting references: [Hunt for threats in Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/hunting) · [Advanced hunting in Defender XDR](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-overview).

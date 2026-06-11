@@ -2,7 +2,7 @@
 
 > **Audience:** complete beginners and SOC Tier 1 analysts.
 > **Goal:** read and write KQL as a sequence of transformations — not memorise snippets.
-> **Prerequisite:** finish [Stage 00 · Setup](../setup/README.md) so `DemoIdentityLogs` exists. Every query here runs against it, so you'll see real results immediately.
+> **Prerequisite:** finish [Stage 00 · Setup](../00-setup/README.md) so `DemoIdentityLogs` exists. Every query here runs against it, so you'll see real results immediately.
 
 ---
 
@@ -208,6 +208,6 @@ DemoIdentityLogs
 - Using `==` when the real `SigninLogs.ResultType` needs `"0"` (string) → see [schema-gotchas](../reference/schema-gotchas.md).
 - Copy-pasting queries without reading them line by line.
 
-**Next:** [Stage 02 · Aggregation & Visualization](../aggregation-viz/README.md) — turn rows into insight with `summarize`, `bin()`, and `render`.
+**Next:** [Stage 02 · Aggregation & Visualization](../02-aggregation-viz/README.md) — turn rows into insight with `summarize`, `bin()`, and `render`.
 
 Reference hub: [Learn common KQL operators](https://learn.microsoft.com/en-us/kusto/query/tutorials/learn-common-operators?view=microsoft-sentinel)

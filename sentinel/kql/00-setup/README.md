@@ -105,6 +105,6 @@ DemoIdentityLogs
 
 ## Done — what's next
 
-You now have `DemoIdentityLogs`. Continue to **[Stage 01 · Basics](../basics/README.md)**.
+You now have `DemoIdentityLogs`. Continue to **[Stage 01 · Basics](../01-basics/README.md)**.
 
 When you eventually have real data flowing into Sentinel, Stages 03–04 switch to the real tables (`SigninLogs`, `AuditLogs`, `DeviceProcessEvents`, …) — and you'll already know the operators cold.
