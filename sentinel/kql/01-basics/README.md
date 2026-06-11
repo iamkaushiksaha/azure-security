@@ -170,14 +170,14 @@ Try these against `DemoIdentityLogs` before peeking at the answers.
 <summary><b>Answers</b></summary>
 
 ```kusto
--- 1
+// 1
 DemoIdentityLogs
 | where EventType == "Audit"
 | project TimeGenerated, UserPrincipalName, OperationName, AuditResult
 | sort by TimeGenerated desc
 ```
 ```kusto
--- 2
+// 2
 DemoIdentityLogs
 | where EventType == "Signin"
 | where ResultType != 0
@@ -185,7 +185,7 @@ DemoIdentityLogs
 | project TimeGenerated, UserPrincipalName, IPAddress, RiskLevelDuringSignIn, ResultDescription
 ```
 ```kusto
--- 3
+// 3
 DemoIdentityLogs
 | where EventType == "Signin"
 | extend Country = Location
@@ -193,7 +193,7 @@ DemoIdentityLogs
 | project TimeGenerated, UserPrincipalName, Country, AppDisplayName
 ```
 ```kusto
--- 4
+// 4
 DemoIdentityLogs
 | search "password"
 ```

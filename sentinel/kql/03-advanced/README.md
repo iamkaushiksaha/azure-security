@@ -231,7 +231,7 @@ These power trend analysis, anomaly hunting, and nested-data flattening. Reach f
 <summary><b>Answers</b></summary>
 
 ```kusto
--- 1
+// 1
 SigninLogs
 | where TimeGenerated > ago(7d)
 | summarize Total = count(), Failed = countif(ResultType != "0") by UserPrincipalName
@@ -239,7 +239,7 @@ SigninLogs
 | sort by FailureRatePct desc
 ```
 ```kusto
--- 2
+// 2
 AuditLogs
 | where TimeGenerated > ago(7d)
 | extend Initiator = tostring(InitiatedBy.user.userPrincipalName)
@@ -248,7 +248,7 @@ AuditLogs
 | sort by Operations desc
 ```
 ```kusto
--- 3
+// 3
 SigninLogs
 | where TimeGenerated > ago(7d)
 | distinct UserPrincipalName
@@ -260,7 +260,7 @@ SigninLogs
 ) on UserPrincipalName
 ```
 ```kusto
--- 4
+// 4
 _Im_Authentication(starttime=ago(24h), eventresult='Failure')
 | summarize Failures = count() by TargetUserId, SrcIpAddr
 | sort by Failures desc

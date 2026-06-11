@@ -177,14 +177,14 @@ Reference: [join operator](https://learn.microsoft.com/en-us/kusto/query/join-op
 <summary><b>Answers</b></summary>
 
 ```kusto
--- 1
+// 1
 DemoIdentityLogs
 | where EventType == "Signin"
 | summarize Total = count(), Failed = countif(ResultType != 0) by UserPrincipalName
 | sort by Failed desc
 ```
 ```kusto
--- 2
+// 2
 DemoIdentityLogs
 | where EventType == "Audit"
 | summarize Count = count() by OperationName
@@ -192,13 +192,13 @@ DemoIdentityLogs
 | render barchart
 ```
 ```kusto
--- 3
+// 3
 DemoIdentityLogs
 | where EventType == "Signin"
 | summarize Countries = make_set(Location) by UserPrincipalName
 ```
 ```kusto
--- 4
+// 4
 DemoIdentityLogs
 | where EventType == "Signin" and ResultType != 0 and UserPrincipalName == "alexw@contoso.com"
 | summarize Failures = count() by bin(TimeGenerated, 1h)

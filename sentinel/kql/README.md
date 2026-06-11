@@ -21,7 +21,8 @@ Most KQL tutorials assume logs are already flowing into `SigninLogs` and `AuditL
 > **No data? Practice anyway.** Stage 00 gives you two free ways to get a working dataset in ~5 minutes — a seeded function in Sentinel/Log Analytics, **or** a CSV loaded into an Azure Data Explorer free cluster (no Azure subscription needed).
 
 ## 📑 Table of Contents
-- [Two ways to practise](#-two-ways-to-practise)
+- [The path at a glance](#️-the-path-at-a-glance)
+- [Two ways to practise](#-two-ways-to-practise--pick-one-in-stage-00)
 - [Who this is for](#-who-this-is-for)
 - [The learning path](#-the-learning-path)
 - [Reference](#-reference-use-anytime)

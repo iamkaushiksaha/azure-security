@@ -1,33 +1,15 @@
 // =============================================================================
-// seed-DemoIdentityLogs.kql
-// A reusable demo dataset for practising KQL WITHOUT waiting for log ingestion.
+// let-DemoIdentityLogs.kql — the ZERO-PERMISSION way to get the demo dataset.
 //
-// Why: most learners have an empty or near-empty Sentinel / Log Analytics
-// workspace, so real tables (SigninLogs, AuditLogs) return nothing. This seeds
-// a deterministic dataset and saves it as a FUNCTION named DemoIdentityLogs,
-// which then behaves like a queryable table in every later lab.
+// "Save as function" (Method 1 in the README) needs write permission on the
+// workspace. If you only have read access — common in shared/training tenants —
+// paste THIS WHOLE BLOCK above any lab query instead. No saved object, same
+// 64 rows, works in Log Analytics, Sentinel AND Azure Data Explorer.
 //
-// One dataset, five users (alexw, meganb, sophial, jamest, itadmin), two event
-// types (53 Signin + 11 Audit = 64 rows) spread across ~6.5 days, so
-// hourly AND daily charts have real shape. TimeGenerated is rebased to now()
-// on every run, so the rows always fall inside your selected time range.
-//
-// No permission to save a function? Use let-DemoIdentityLogs.kql instead
-// (same rows wrapped in a let statement you paste above each lab query).
-//
-// ResultType note:
-//   - In THIS seeded dataset ResultType is an INT  -> use  ResultType != 0
-//   - In the REAL SigninLogs table ResultType is a STRING -> use ResultType != "0"
-//   (See ../reference/schema-gotchas.md)
+// Usage: copy everything, paste into the query editor, replace the final
+//        "DemoIdentityLogs | take 10" with the lab query you want to run.
 // =============================================================================
-
-
-// -----------------------------------------------------------------------------
-// METHOD A — Microsoft Sentinel / Log Analytics  (and also works in ADX)
-// Paste into Logs (KQL mode), Run, then Save > Save as function:
-//   Function name : DemoIdentityLogs
-//   Category      : Functions
-// -----------------------------------------------------------------------------
+let DemoIdentityLogs = (
 datatable(
     Offset:timespan,
     EventType:string,
@@ -110,22 +92,7 @@ datatable(
 ]
 | extend TimeGenerated = now() - Offset
 | project-away Offset
-
-
-// -----------------------------------------------------------------------------
-// METHOD B — Azure Data Explorer (free cluster) as a stored function
-// If you prefer a persistent function in ADX instead of CSV ingestion, run the
-// control command below in your free cluster (https://aka.ms/kustofree).
-// Then query it with:  DemoIdentityLogs | take 10
-// -----------------------------------------------------------------------------
-// .create-or-alter function DemoIdentityLogs() {
-//     datatable(Offset:timespan, EventType:string, UserPrincipalName:string,
-//         IPAddress:string, AppDisplayName:string, ResultType:int,
-//         ResultDescription:string, RiskLevelDuringSignIn:string, Location:string,
-//         OperationName:string, AuditResult:string, Category:string)
-//     [
-//         // ... paste the same 64 rows as above ...
-//     ]
-//     | extend TimeGenerated = now() - Offset
-//     | project-away Offset
-// }
+);
+// --- replace the two lines below with any lab query ---
+DemoIdentityLogs
+| take 10

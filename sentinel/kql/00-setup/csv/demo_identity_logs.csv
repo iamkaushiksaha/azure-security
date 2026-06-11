@@ -1,21 +1,65 @@
 Offset,EventType,UserPrincipalName,IPAddress,AppDisplayName,ResultType,ResultDescription,RiskLevelDuringSignIn,Location,OperationName,AuditResult,Category
-06:00:00,Signin,alexw@contoso.com,52.170.12.45,Azure Portal,0,Success,none,United States,,,
-05:55:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
-05:50:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
-05:45:00,Signin,alexw@contoso.com,185.220.101.2,Azure Portal,50053,Account locked,high,Netherlands,,,
-05:40:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
-05:35:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
-05:30:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50057,User account disabled,high,Germany,,,
-05:25:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50055,Password expired,medium,Germany,,,
-05:20:00,Signin,jamest@contoso.com,40.74.25.67,Azure Portal,0,Success,none,United States,,,
-05:15:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,50126,Invalid username or password,low,United States,,,
-05:10:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,0,Success,none,United States,,,
-05:05:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
-05:00:00,Audit,itadmin@contoso.com,,,-1,,,,Add member to group,Success,GroupManagement
-04:55:00,Audit,itadmin@contoso.com,,,-1,,,,Update user,Success,UserManagement
-04:50:00,Audit,itadmin@contoso.com,,,-1,,,,Reset user password,Success,UserManagement
-04:45:00,Audit,alexw@contoso.com,,,-1,,,,Add app role assignment to user,Failure,ApplicationManagement
-04:40:00,Audit,alexw@contoso.com,,,-1,,,,Add app role assignment to user,Failure,ApplicationManagement
-04:35:00,Audit,meganb@contoso.com,,,-1,,,,Update group,Success,GroupManagement
-04:30:00,Audit,sophial@contoso.com,,,-1,,,,Delete application,Failure,ApplicationManagement
-04:25:00,Audit,jamest@contoso.com,,,-1,,,,Consent to application,Success,ApplicationManagement
+6.10:15:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+6.09:20:00,Signin,alexw@contoso.com,52.170.12.45,Azure Portal,0,Success,none,United States,,,
+6.08:05:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+6.07:50:00,Audit,itadmin@contoso.com,,,-1,,,,Add member to group,Success,GroupManagement
+6.07:35:00,Signin,jamest@contoso.com,40.74.25.67,Azure Portal,0,Success,none,United States,,,
+6.04:30:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+6.03:10:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,0,Success,none,United States,,,
+6.02:20:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50057,User account disabled,high,Germany,,,
+5.10:05:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+5.08:40:00,Signin,alexw@contoso.com,52.170.12.45,Microsoft Graph,0,Success,none,United States,,,
+5.07:25:00,Signin,jamest@contoso.com,40.74.25.67,Azure Portal,0,Success,none,United States,,,
+5.06:10:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50055,Password expired,medium,Germany,,,
+5.05:00:00,Audit,itadmin@contoso.com,,,-1,,,,Update user,Success,UserManagement
+5.03:20:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+5.02:45:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+5.01:30:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50055,Password expired,medium,Germany,,,
+4.09:30:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+4.08:15:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+4.07:20:00,Signin,alexw@contoso.com,52.170.12.45,Azure Portal,0,Success,none,United States,,,
+4.06:45:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,50126,Invalid username or password,low,United States,,,
+4.06:43:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,0,Success,none,United States,,,
+4.05:30:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50055,Password expired,medium,Germany,,,
+4.04:10:00,Audit,meganb@contoso.com,,,-1,,,,Update group,Success,GroupManagement
+4.02:50:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+3.11:00:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
+3.10:40:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
+3.10:20:00,Signin,alexw@contoso.com,185.220.101.2,Azure Portal,50126,Invalid username or password,medium,Netherlands,,,
+3.09:55:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
+3.09:30:00,Signin,alexw@contoso.com,185.220.101.2,Azure Portal,50126,Invalid username or password,high,Netherlands,,,
+3.09:05:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,high,Netherlands,,,
+3.08:15:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+3.07:15:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50057,User account disabled,high,Germany,,,
+3.06:40:00,Audit,sophial@contoso.com,,,-1,,,,Delete application,Failure,ApplicationManagement
+3.05:55:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+3.05:40:00,Audit,itadmin@contoso.com,,,-1,,,,Add member to group,Success,GroupManagement
+3.04:35:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+3.02:10:00,Signin,jamest@contoso.com,40.74.25.67,Azure Portal,0,Success,none,United States,,,
+2.16:30:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,medium,Netherlands,,,
+2.12:10:00,Signin,alexw@contoso.com,185.220.101.2,Azure Portal,50126,Invalid username or password,medium,Netherlands,,,
+2.08:45:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,50126,Invalid username or password,high,Netherlands,,,
+2.08:30:00,Signin,alexw@contoso.com,185.220.101.2,Azure Portal,50053,Account locked,high,Netherlands,,,
+2.07:40:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+2.06:30:00,Audit,itadmin@contoso.com,,,-1,,,,Update user,Success,UserManagement
+2.06:00:00,Signin,alexw@contoso.com,52.170.12.45,Azure Portal,0,Success,none,United States,,,
+2.05:50:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,50055,Password expired,medium,Germany,,,
+2.04:20:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+2.03:05:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,0,Success,none,United States,,,
+2.02:15:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+1.10:00:00,Audit,itadmin@contoso.com,,,-1,,,,Reset user password,Success,UserManagement
+1.08:30:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,0,Success,none,Germany,,,
+1.07:45:00,Signin,meganb@contoso.com,20.98.111.30,Office 365 Exchange Online,0,Success,none,United Kingdom,,,
+1.06:20:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+1.05:15:00,Signin,alexw@contoso.com,185.220.101.2,Microsoft Graph,0,Success,high,Netherlands,,,
+1.04:50:00,Audit,alexw@contoso.com,,,-1,,,,Add app role assignment to user,Failure,ApplicationManagement
+1.04:35:00,Audit,alexw@contoso.com,,,-1,,,,Add app role assignment to user,Failure,ApplicationManagement
+1.03:20:00,Audit,jamest@contoso.com,,,-1,,,,Consent to application,Success,ApplicationManagement
+1.02:40:00,Signin,jamest@contoso.com,40.74.25.67,Azure Portal,0,Success,none,United States,,,
+1.01:55:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+0.05:10:00,Signin,sophial@contoso.com,13.69.54.88,SharePoint Online,0,Success,none,Germany,,,
+0.04:00:00,Signin,alexw@contoso.com,52.170.12.45,Azure Portal,0,Success,none,United States,,,
+0.03:00:00,Signin,itadmin@contoso.com,104.46.92.14,Azure Portal,0,Success,none,India,,,
+0.02:45:00,Audit,itadmin@contoso.com,,,-1,,,,Add member to group,Success,GroupManagement
+0.02:30:00,Signin,meganb@contoso.com,20.98.111.30,Microsoft Teams,0,Success,none,United Kingdom,,,
+0.01:40:00,Signin,jamest@contoso.com,40.74.25.67,Microsoft Graph,0,Success,none,United States,,,
