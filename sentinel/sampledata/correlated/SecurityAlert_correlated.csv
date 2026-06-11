@@ -1,0 +1,52 @@
+
+TimeGenerated,AlertId,AlertName,Severity,UserPrincipalName,AccountName,Computer,CorrelationId,TechniqueId,TechniqueName,Phase,IncidentId
+2026-02-01 09:40:00,35bc6097-ba37-4e75-9e02-f4ca0c02bb69,Brute Force Detected,Low,user1@contoso.com,user1,HOST01,session_01,T1110,Brute Force,Credential access,7917b018-aa3b-4f11-a246-9a6175f84953
+2026-02-01 09:44:00,1faf1672-0d5f-4f0a-93e9-650418d8f72f,Valid Accounts Detected,High,user1@contoso.com,user1,HOST01,session_01,T1078,Valid Accounts,Initial access,c488b653-d110-437f-a4c9-48e195d5f902
+2026-02-01 09:48:00,dbd90f15-e70e-4435-aade-314beade4520,Account Manipulation Detected,High,user1@contoso.com,user1,HOST01,session_01,T1098,Account Manipulation,Persistence,4212633e-50bd-4897-85e0-b24f4ba2ca66
+2026-02-01 09:52:00,f8eac518-6f3c-4b3b-9a22-7d69c8d9942d,Remote Services Detected,Medium,user1@contoso.com,user1,HOST01,session_01,T1021,Remote Services,Lateral movement,57e9f25a-104e-44e1-9976-a9c904685c7d
+2026-02-01 09:56:00,607c08b4-5c0e-4e36-a8e6-11380b83684a,PowerShell Detected,High,user1@contoso.com,user1,HOST01,session_01,T1059,PowerShell,Execution,380f0dbb-e3e2-4e84-ae46-5e2fea4db834
+2026-02-02 09:40:00,448192a1-337b-41e0-b4eb-632dab3909be,Brute Force Detected,High,user2@contoso.com,user2,HOST02,session_02,T1110,Brute Force,Credential access,2291178a-763e-4fac-87c5-0d233e8687ca
+2026-02-02 09:44:00,27300ca0-8fc5-4700-9d20-ef5bc4c5bcda,Valid Accounts Detected,Low,user2@contoso.com,user2,HOST02,session_02,T1078,Valid Accounts,Initial access,7676e8e7-4405-4f10-a130-bbfb26e8a5e0
+2026-02-02 09:48:00,6483d7b1-7da0-4d2f-bc82-d5256f81dff3,Account Manipulation Detected,Low,user2@contoso.com,user2,HOST02,session_02,T1098,Account Manipulation,Persistence,1c9adf37-1fdb-46aa-859b-e8eea93fed0d
+2026-02-02 09:52:00,a7e48901-d97f-4719-82fa-bce38aef397e,Remote Services Detected,Medium,user2@contoso.com,user2,HOST02,session_02,T1021,Remote Services,Lateral movement,4f9b7988-de06-471d-8000-eefc5b987135
+2026-02-02 09:56:00,2f192f0d-cf51-4edd-8311-9f52807d0b1c,PowerShell Detected,High,user2@contoso.com,user2,HOST02,session_02,T1059,PowerShell,Execution,9611d27c-fb0b-4b85-a747-09220d93824a
+2026-02-03 09:40:00,6ff5fc8c-72bb-4502-8550-551aa3c96aa9,Brute Force Detected,Low,user3@contoso.com,user3,HOST03,session_03,T1110,Brute Force,Credential access,2c2bb9ee-6bb5-4348-85e4-198a211ec1d7
+2026-02-03 09:44:00,a65bc086-08b9-4c91-9900-a8ef65367093,Valid Accounts Detected,Low,user3@contoso.com,user3,HOST03,session_03,T1078,Valid Accounts,Initial access,f2d61de7-8b1a-4418-878f-b47a5039acb4
+2026-02-03 09:48:00,e2319689-f6ef-497d-b271-fc813235a96b,Account Manipulation Detected,Medium,user3@contoso.com,user3,HOST03,session_03,T1098,Account Manipulation,Persistence,9398d9bb-d1ac-4783-8c90-8a91a1899e60
+2026-02-03 09:52:00,b131c7cd-71d9-41d3-bf99-d317f202bbd8,Remote Services Detected,High,user3@contoso.com,user3,HOST03,session_03,T1021,Remote Services,Lateral movement,b4203780-542f-4eea-a934-2e302ae22482
+2026-02-03 09:56:00,68d8f419-6f28-4912-b96f-c4238c67d7f0,PowerShell Detected,High,user3@contoso.com,user3,HOST03,session_03,T1059,PowerShell,Execution,db5a4fd7-4e2f-4d41-a4a6-3861bea54598
+2026-02-04 09:40:00,74b6ab8e-7cfb-458c-9e2e-a7b3cc975be7,Brute Force Detected,Low,user4@contoso.com,user4,HOST04,session_04,T1110,Brute Force,Credential access,9f51a89b-220f-43bb-b670-f7ab74c47e76
+2026-02-04 09:44:00,cfcf85b8-6e0d-420f-8f2d-ca1f785cb2db,Valid Accounts Detected,Low,user4@contoso.com,user4,HOST04,session_04,T1078,Valid Accounts,Initial access,570d53bb-d368-4739-929d-53db54a72f3f
+2026-02-04 09:48:00,a3fb5bcb-4bcf-4c3f-b311-bca0341e96a7,Account Manipulation Detected,Low,user4@contoso.com,user4,HOST04,session_04,T1098,Account Manipulation,Persistence,6efdd612-283d-4fc2-9e93-4b8f590413d3
+2026-02-04 09:52:00,84fbac3c-8252-49c5-b580-49aa53a81b80,Remote Services Detected,High,user4@contoso.com,user4,HOST04,session_04,T1021,Remote Services,Lateral movement,f19720e8-6cd0-4829-86f7-87fb32708646
+2026-02-04 09:56:00,6e10c733-2dc9-4a5b-bf62-a42535563765,PowerShell Detected,Low,user4@contoso.com,user4,HOST04,session_04,T1059,PowerShell,Execution,ee58daa2-afa5-4f9e-b4e0-1c1300e9e655
+2026-02-05 09:40:00,adca8872-0914-44d3-9464-3690db4c30ca,Brute Force Detected,Medium,user5@contoso.com,user5,HOST05,session_05,T1110,Brute Force,Credential access,e273232a-267d-4a8b-9d23-72e36f2a4d3d
+2026-02-05 09:44:00,bcd5cd61-b51a-451a-8cb6-b011960f4a20,Valid Accounts Detected,High,user5@contoso.com,user5,HOST05,session_05,T1078,Valid Accounts,Initial access,1946f1ab-6b80-4ccd-ad6f-a8171f79c291
+2026-02-05 09:48:00,cd146b6b-8700-4cd2-965b-a3eb63a3a8b1,Account Manipulation Detected,Medium,user5@contoso.com,user5,HOST05,session_05,T1098,Account Manipulation,Persistence,e4e1850a-e57c-4577-8732-902126f8ee97
+2026-02-05 09:52:00,134a5cb0-a87a-44ed-8bb8-f9c595fd53de,Remote Services Detected,Medium,user5@contoso.com,user5,HOST05,session_05,T1021,Remote Services,Lateral movement,00da6601-62ac-416e-892d-f5d205a99a50
+2026-02-05 09:56:00,3e2e4602-05fa-4034-8182-91cdcfa14da0,PowerShell Detected,Low,user5@contoso.com,user5,HOST05,session_05,T1059,PowerShell,Execution,ade1748f-a39b-4652-b146-cb6ef7ed0489
+2026-02-06 09:40:00,a606779d-c4f8-4c5a-85ac-c035747aaa87,Brute Force Detected,High,user6@contoso.com,user6,HOST06,session_06,T1110,Brute Force,Credential access,a58fbe74-d973-472f-a822-aeb4a4dfc01e
+2026-02-06 09:44:00,0efc0af9-1d91-481e-8800-84efdd559863,Valid Accounts Detected,High,user6@contoso.com,user6,HOST06,session_06,T1078,Valid Accounts,Initial access,9d7ce338-2983-4b04-8d0f-f63fa559348f
+2026-02-06 09:48:00,1f0c39f8-01af-4dbd-acac-80586e54134a,Account Manipulation Detected,High,user6@contoso.com,user6,HOST06,session_06,T1098,Account Manipulation,Persistence,55554905-d0bb-48f1-8212-b8ab123c6103
+2026-02-06 09:52:00,788cdaec-465d-4446-b5c3-3bf8a611c213,Remote Services Detected,Medium,user6@contoso.com,user6,HOST06,session_06,T1021,Remote Services,Lateral movement,0ae90bf6-0da4-41c7-927a-be06a7c061a6
+2026-02-06 09:56:00,aa5c0a17-ad93-478e-9d86-6f0f908d106b,PowerShell Detected,Medium,user6@contoso.com,user6,HOST06,session_06,T1059,PowerShell,Execution,37381b34-5bc3-40d0-8799-c60dc16c66a1
+2026-02-07 09:40:00,29436cb2-faaa-4464-a302-81b3fb0f6923,Brute Force Detected,Medium,user7@contoso.com,user7,HOST07,session_07,T1110,Brute Force,Credential access,55a8eada-cc93-44a4-aa21-eb26b7001f0d
+2026-02-07 09:44:00,97e8627a-b069-40ca-b7d1-501c6cd8821e,Valid Accounts Detected,Medium,user7@contoso.com,user7,HOST07,session_07,T1078,Valid Accounts,Initial access,6622c714-2d11-4cbe-a1b1-1b63284a7dd6
+2026-02-07 09:48:00,0202bea4-7e06-44cb-9591-a12747786ba5,Account Manipulation Detected,Medium,user7@contoso.com,user7,HOST07,session_07,T1098,Account Manipulation,Persistence,3753a220-299d-4f0e-a845-88d5a9917bf3
+2026-02-07 09:52:00,35634a7a-a4c1-4ed4-9947-f6585a0122ca,Remote Services Detected,High,user7@contoso.com,user7,HOST07,session_07,T1021,Remote Services,Lateral movement,a0f44584-2838-4ca4-ab57-bf6691a2466b
+2026-02-07 09:56:00,a1dd39bc-c348-4751-bd34-a1b4492b09e0,PowerShell Detected,High,user7@contoso.com,user7,HOST07,session_07,T1059,PowerShell,Execution,d64b3d09-4296-48d5-953f-3eeaf38fad46
+2026-02-08 09:40:00,58fc2b10-27e2-43a2-b088-aecdecd9e178,Brute Force Detected,Medium,user8@contoso.com,user8,HOST08,session_08,T1110,Brute Force,Credential access,59ef763b-4d19-4706-97e9-4ae8f1d845f1
+2026-02-08 09:44:00,21a1a796-ec8e-4b10-9572-46e73fdc10da,Valid Accounts Detected,Medium,user8@contoso.com,user8,HOST08,session_08,T1078,Valid Accounts,Initial access,9d4aff33-cf07-4b22-a80a-b49b95ab51ed
+2026-02-08 09:48:00,452e7100-91a7-4925-af6d-e3ec2ad84bdd,Account Manipulation Detected,Low,user8@contoso.com,user8,HOST08,session_08,T1098,Account Manipulation,Persistence,796415d3-767d-4e49-8cf5-115fe85e04a6
+2026-02-08 09:52:00,e079d84f-1750-46da-9f93-4c38623e4909,Remote Services Detected,Low,user8@contoso.com,user8,HOST08,session_08,T1021,Remote Services,Lateral movement,831bf584-9a3a-4ba0-9d0b-3c0006c70b48
+2026-02-08 09:56:00,fdf2fbcf-7cda-4f41-9b2d-78c26053b386,PowerShell Detected,Medium,user8@contoso.com,user8,HOST08,session_08,T1059,PowerShell,Execution,9f88a41d-1270-45ee-b624-3f5e64c65274
+2026-02-09 09:40:00,20f18eb0-5b26-46b7-9836-ca09d7121060,Brute Force Detected,High,user9@contoso.com,user9,HOST09,session_09,T1110,Brute Force,Credential access,20500bc5-751c-4399-b2c0-c4d184add275
+2026-02-09 09:44:00,d81aad41-ec1c-4d97-ada4-752210d35a21,Valid Accounts Detected,Medium,user9@contoso.com,user9,HOST09,session_09,T1078,Valid Accounts,Initial access,0d60dc98-5f19-4dc9-8d75-e9b65e0c213b
+2026-02-09 09:48:00,7e84d32f-720a-46d3-bf82-81516861eb1e,Account Manipulation Detected,Low,user9@contoso.com,user9,HOST09,session_09,T1098,Account Manipulation,Persistence,f178c9d4-6e8a-4921-aacb-ac0ba832f92b
+2026-02-09 09:52:00,2cee3afe-82a2-49d1-9d1c-6f5c01c30971,Remote Services Detected,Medium,user9@contoso.com,user9,HOST09,session_09,T1021,Remote Services,Lateral movement,ae9f2641-4c43-4141-aab3-2b0e7afe3df6
+2026-02-09 09:56:00,95473134-8ca2-4f0d-82c0-c6318cc68b95,PowerShell Detected,Medium,user9@contoso.com,user9,HOST09,session_09,T1059,PowerShell,Execution,782ed4d0-07e2-41ae-8449-e937878ae62f
+2026-02-10 09:40:00,56917645-e4a4-4403-8f4e-bc629a61af1f,Brute Force Detected,High,user10@contoso.com,user10,HOST10,session_10,T1110,Brute Force,Credential access,d05ea9b6-f303-47c7-b241-1d592d654de2
+2026-02-10 09:44:00,c52a2838-c997-45ff-ae65-b67c5e000673,Valid Accounts Detected,Medium,user10@contoso.com,user10,HOST10,session_10,T1078,Valid Accounts,Initial access,bc3742a0-d495-43f0-8458-bcf47c583fb5
+2026-02-10 09:48:00,a657fb70-3622-4222-b438-56b3cdda0a76,Account Manipulation Detected,Medium,user10@contoso.com,user10,HOST10,session_10,T1098,Account Manipulation,Persistence,65c545a7-7c25-4c24-91a1-1f249f354750
+2026-02-10 09:52:00,4472c905-2941-4768-af43-4a5c7b07e5f6,Remote Services Detected,Medium,user10@contoso.com,user10,HOST10,session_10,T1021,Remote Services,Lateral movement,1573ff0b-ea31-4608-b5b6-531033cb277e
+2026-02-10 09:56:00,c4f79cef-2583-4b1c-b828-ffb2ed4fefdf,PowerShell Detected,Medium,user10@contoso.com,user10,HOST10,session_10,T1059,PowerShell,Execution,3d6410af-83eb-4efa-8689-b229c46a0ef0
