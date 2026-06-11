@@ -42,6 +42,7 @@ azure-security/
 │       └── ENTERPRISE_DOC_TEMPLATE.md
 ├── sentinel/
 │   ├── docs/
+│   ├── kql/            # KQL Mastery Path — novice → threat hunter
 │   ├── sampledata/
 │   └── labs/
 ├── detections/
