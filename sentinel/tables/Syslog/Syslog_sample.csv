@@ -1,0 +1,31 @@
+TimeGenerated,Computer,HostName,HostIP,Facility,SeverityLevel,ProcessName,ProcessID,SyslogMessage,EventTime,SourceSystem
+2026-06-10T08:49:58Z,WEB-APP-01,WEB-APP-01,10.10.20.41,cron,info,CRON,2811,"(root) CMD (   cd / && run-parts --report /etc/cron.hourly)",2026-06-10T08:49:58Z,Linux
+2026-06-10T08:50:12Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3201,"Failed password for invalid user admin from 185.220.101.2 port 49102 ssh2",2026-06-10T08:50:12Z,Linux
+2026-06-10T08:50:14Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3201,"Invalid user admin from 185.220.101.2 port 49102",2026-06-10T08:50:14Z,Linux
+2026-06-10T08:50:21Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3204,"Failed password for invalid user oracle from 185.220.101.2 port 49110 ssh2",2026-06-10T08:50:21Z,Linux
+2026-06-10T08:50:29Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3207,"Failed password for invalid user postgres from 185.220.101.2 port 49118 ssh2",2026-06-10T08:50:29Z,Linux
+2026-06-10T08:50:37Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3210,"Failed password for invalid user deploy from 185.220.101.2 port 49126 ssh2",2026-06-10T08:50:37Z,Linux
+2026-06-10T08:50:45Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3214,"Failed password for root from 185.220.101.2 port 49135 ssh2",2026-06-10T08:50:45Z,Linux
+2026-06-10T08:50:53Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3214,"Failed password for root from 185.220.101.2 port 49135 ssh2",2026-06-10T08:50:53Z,Linux
+2026-06-10T08:51:01Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3219,"Failed password for invalid user git from 185.220.101.2 port 49150 ssh2",2026-06-10T08:51:01Z,Linux
+2026-06-10T08:51:09Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3222,"Failed password for webadmin from 185.220.101.2 port 49158 ssh2",2026-06-10T08:51:09Z,Linux
+2026-06-10T08:51:18Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,notice,sshd,3222,"PAM 6 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=185.220.101.2 user=webadmin",2026-06-10T08:51:18Z,Linux
+2026-06-10T08:51:33Z,WEB-APP-01,WEB-APP-01,10.10.20.41,daemon,info,systemd,1,"Started Session 4201 of user www-data.",2026-06-10T08:51:33Z,Linux
+2026-06-10T08:52:47Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3251,"Accepted password for webadmin from 185.220.101.2 port 49210 ssh2",2026-06-10T08:52:47Z,Linux
+2026-06-10T08:52:47Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3251,"pam_unix(sshd:session): session opened for user webadmin by (uid=0)",2026-06-10T08:52:47Z,Linux
+2026-06-10T08:52:48Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,systemd-logind,742,"New session 4205 of user webadmin.",2026-06-10T08:52:48Z,Linux
+2026-06-10T08:55:02Z,WEB-APP-01,WEB-APP-01,10.10.20.41,cron,info,CRON,3288,"(www-data) CMD (php /var/www/app/artisan schedule:run >> /dev/null 2>&1)",2026-06-10T08:55:02Z,Linux
+2026-06-10T09:01:14Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,notice,sudo,3312,"  webadmin : TTY=pts/0 ; PWD=/home/webadmin ; USER=root ; COMMAND=/usr/bin/apt-get install -y netcat-traditional",2026-06-10T09:01:14Z,Linux
+2026-06-10T09:01:14Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sudo,3312,"pam_unix(sudo:session): session opened for user root by webadmin(uid=1004)",2026-06-10T09:01:14Z,Linux
+2026-06-10T09:03:50Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,notice,sudo,3340,"  webadmin : TTY=pts/0 ; PWD=/home/webadmin ; USER=root ; COMMAND=/bin/su -",2026-06-10T09:03:50Z,Linux
+2026-06-10T09:03:50Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,su,3343,"pam_unix(su-l:session): session opened for user root by webadmin(uid=1004)",2026-06-10T09:03:50Z,Linux
+2026-06-10T09:03:51Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,su,3343,"Successful su for root by webadmin",2026-06-10T09:03:51Z,Linux
+2026-06-10T09:07:22Z,WEB-APP-01,WEB-APP-01,10.10.20.41,daemon,warning,dockerd,1188,"time=""2026-06-10T09:07:22Z"" level=warning msg=""failed to load default seccomp profile""",2026-06-10T09:07:22Z,Linux
+2026-06-10T09:12:05Z,WEB-APP-01,WEB-APP-01,10.10.20.41,auth,info,useradd,3401,"new user: name=svc-deploy, UID=1500, GID=1500, home=/home/svc-deploy, shell=/bin/bash",2026-06-10T09:12:05Z,Linux
+2026-06-10T09:12:06Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,passwd,3404,"pam_unix(passwd:chauthtok): password changed for svc-deploy",2026-06-10T09:12:06Z,Linux
+2026-06-10T09:12:40Z,WEB-APP-01,WEB-APP-01,10.10.20.41,auth,notice,usermod,3410,"add 'svc-deploy' to group 'sudo'",2026-06-10T09:12:40Z,Linux
+2026-06-10T09:15:33Z,WEB-APP-01,WEB-APP-01,10.10.20.41,cron,info,crontab,3421,"(root) REPLACE (root)",2026-06-10T09:15:33Z,Linux
+2026-06-10T09:18:08Z,WEB-APP-01,WEB-APP-01,10.10.20.41,daemon,info,systemd,1,"Reloading.",2026-06-10T09:18:08Z,Linux
+2026-06-10T09:20:11Z,WEB-APP-01,WEB-APP-01,10.10.20.41,authpriv,info,sshd,3251,"pam_unix(sshd:session): session closed for user webadmin",2026-06-10T09:20:11Z,Linux
+2026-06-10T08:30:00Z,DC01,DC01,10.10.10.5,daemon,info,systemd,1,"Started Daily apt download activities.",2026-06-10T08:30:00Z,Linux
+2026-06-10T08:45:01Z,FIN-WS-07,FIN-WS-07,10.10.30.7,cron,info,CRON,9120,"(root) CMD (command -v debian-sa1 > /dev/null && debian-sa1 1 1)",2026-06-10T08:45:01Z,Linux
