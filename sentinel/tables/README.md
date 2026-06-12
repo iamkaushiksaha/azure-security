@@ -2,10 +2,10 @@
 
 # 🗂️ Microsoft Sentinel Table Library
 
-**Schema-accurate reference + ready-to-ingest sample logs for 21 Log Analytics / Defender XDR tables — woven into one correlated attack scenario you can hunt, triage, and test detections against.**
+**Schema-accurate reference + ready-to-ingest sample logs for 27 Log Analytics / Defender XDR tables — woven into one correlated attack scenario you can hunt, triage, and test detections against.**
 
 ![Microsoft Sentinel](https://img.shields.io/badge/Microsoft-Sentinel-0078D4?logo=microsoftazure&logoColor=white)
-![Tables](https://img.shields.io/badge/Tables-21-512BD4)
+![Tables](https://img.shields.io/badge/Tables-27-512BD4)
 ![Schema validated](https://img.shields.io/badge/Schema-validated%20vs%20MS%20Learn-2EA043)
 ![MITRE ATT&CK](https://img.shields.io/badge/Mapped-MITRE%20ATT%26CK-red)
 ![Sample logs](https://img.shields.io/badge/Sample%20logs-included-success)
@@ -22,7 +22,7 @@ Real Sentinel environments rarely have every table populated, so analysts can't 
 - **single-table, MITRE-mapped hunting hypotheses** with runnable KQL, and
 - a **schema-true sample CSV** you can ingest.
 
-Every sample uses the **same cast of users, IPs, and hosts**, so the 21 standalone files also act as **one correlated dataset** — see the [Operation Quiet Ledger scenario](scenarios/operation-quiet-ledger/README.md) for the cross-table joins.
+Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalone files also act as **one correlated dataset** — see the [Operation Quiet Ledger scenario](scenarios/operation-quiet-ledger/README.md) for the cross-table joins.
 
 > [!NOTE]
 > **Schema-accurate, not schema-exhaustive.** Each table doc lists every column from Microsoft Learn, but each sample CSV ships a *curated subset* of the most detection-relevant real columns (10–22 of them) so the data stays readable and runnable. Column names and types are always exact.
@@ -33,6 +33,7 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 21 standalo
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
 | [SigninLogs](SigninLogs/README.md) | Entra ID interactive sign-ins | Risky success from a Tor IP after a brute-force burst | T1110 · T1078 |
+| [AuditLogs](AuditLogs/README.md) | Entra ID directory audit (roles/apps/consent) | Self-added to a privileged role + rogue app consent | T1098.003 · T1528 |
 | [OfficeActivity](OfficeActivity/README.md) | M365 unified audit (Exchange/SharePoint/Teams) | Malicious inbox rule + mass file download/share | T1114.003 · T1567.002 |
 | [EmailEvents](EmailEvents/README.md) | Defender for O365 email + verdicts | Lookalike-domain phish delivered (ZAP miss) | T1566.001 · T1566.002 |
 
@@ -40,7 +41,9 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 21 standalo
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
 | [DeviceLogonEvents](DeviceLogonEvents/README.md) | Device authentications | RDP onto FIN-WS-07, then a DC01 failure burst | T1021.001 · T1110 |
-| [DeviceProcessEvents → DeviceEvents](DeviceEvents/README.md) | ASR / AMSI / misc device security events | ASR audit→block, AMSI catch, LOLBins | T1059 · T1218 |
+| [DeviceProcessEvents](DeviceProcessEvents/README.md) | Process creation (the process tree) | winword → encoded PowerShell → LOLBins → dumper | T1059.001 · T1566 |
+| [DeviceNetworkEvents](DeviceNetworkEvents/README.md) | Network connections by process | PowerShell beaconing to C2 + exfil push | T1071.001 · T1041 |
+| [DeviceEvents](DeviceEvents/README.md) | ASR / AMSI / misc device security events | ASR audit→block, AMSI catch, LOLBins | T1059 · T1218 |
 | [DeviceFileEvents](DeviceFileEvents/README.md) | File create/modify/rename | Payload drop, renamed cred-dumper, staged ZIP | T1105 · T1560.001 · T1003 |
 
 ### 🪟 Windows host logs
@@ -56,11 +59,12 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 21 standalo
 | [LinuxAuditLog](LinuxAuditLog/README.md) | Linux auditd records | /etc/shadow read, payload run, auditd tamper | T1003.008 · T1562.001 |
 | [ASimAgentEventLogs](ASimAgentEventLogs/README.md) | **ASIM AI/LLM agent** telemetry (model/tool/tokens) | AI agent driven to call storage/KeyVault tools | T1059 · T1565.001 |
 
-### 🌐 DNS & network
+### 🌐 Network, DNS & perimeter
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
 | [DnsEvents](DnsEvents/README.md) | Windows DNS query/analytic events | C2 beacon + DGA subdomains + NXDOMAIN spikes | T1568.002 · T1071.004 |
 | [DnsAuditEvents](DnsAuditEvents/README.md) | Windows DNS **audit** (zone/record changes) | Rogue records + malicious forwarder planted | T1565 · T1556 |
+| [CommonSecurityLog](CommonSecurityLog/README.md) | Firewall / proxy CEF appliance logs | Inbound RDP allowed + >1 GB exfil egress burst | T1567 · T1071 |
 
 ### ☁️ Azure control plane & resources
 | Table | What it captures | Sample story | Key MITRE |
@@ -75,16 +79,18 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 21 standalo
 | [AKSAudit](AKSAudit/README.md) | Full Kubernetes API audit | Secret enumeration + `pods/exec` recon | T1609 · T1552.007 |
 | [AKSAuditAdmin](AKSAuditAdmin/README.md) | API audit, **admin subset** (no get/list/watch) | clusterrolebinding→cluster-admin, logging deleted | T1098 · T1562.001 |
 
-### 📊 Sentinel alerts & operations
+### 📊 Sentinel alerts, incidents & operations
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
+| [SecurityAlert](SecurityAlert/README.md) | Sentinel/Defender security alerts | The 12 alerts the attack tripped (entities in JSON) | *(detection layer)* |
+| [SecurityIncident](SecurityIncident/README.md) | Sentinel incidents (alert grouping, change log) | Incident #4471 New→Active→Closed(TruePositive) | *(case layer)* |
 | [Alert](Alert/README.md) | Azure Monitor alerts (legacy log-search/SCOM) | Infra alerts fire across the incident window | *(triage corroboration)* |
 | [Usage](Usage/README.md) | Per-table ingestion metering | Ingestion spike; Syslog drops to 0 (source killed) | T1562.008 |
 | [Heartbeat](Heartbeat/README.md) | Agent health beacon | WEB-APP-01 goes silent mid-attack | T1562.001 |
 
 ## 🎯 The correlated scenario — "Operation Quiet Ledger"
 
-The sample data isn't 21 disconnected demos — it's **one intrusion** seen from 21 angles, all on **2026-06-10**: an emailed phish compromises a finance analyst (`alexw`), who is driven from a Tor IP onto `FIN-WS-07`, laterally to `DC01`, then pivots into Azure to escalate privilege, harvest secrets, and exfiltrate finance data from blob storage and AKS — with a parallel Linux foothold on `WEB-APP-01`.
+The sample data isn't 21 disconnected demos — it's **one intrusion** seen from two dozen angles, all on **2026-06-10**: an emailed phish compromises a finance analyst (`alexw`), who is driven from a Tor IP onto `FIN-WS-07`, laterally to `DC01`, then pivots into Azure to escalate privilege, harvest secrets, and exfiltrate finance data from blob storage and AKS — with a parallel Linux foothold on `WEB-APP-01`.
 
 ➡️ **[Read the full scenario, kill-chain, and cross-table join queries →](scenarios/operation-quiet-ledger/README.md)**
 

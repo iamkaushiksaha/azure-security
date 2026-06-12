@@ -1,6 +1,6 @@
 # 🎯 Operation Quiet Ledger — a correlated, multi-table intrusion
 
-> A single intrusion on **2026-06-10**, captured across **18 of the library's tables**, so you can practise **cross-table correlation, incident triage, and analytic-rule testing** on data that actually joins up. Every query below runs against the per-table sample CSVs in [`sentinel/tables/`](../../README.md) once you've ingested them.
+> A single intrusion on **2026-06-10**, captured across **two dozen of the library's tables** — from the phishing email and the alerts it tripped all the way to the incident case — so you can practise **cross-table correlation, incident triage, and analytic-rule testing** on data that actually joins up. Every query below runs against the per-table sample CSVs in [`sentinel/tables/`](../../README.md) once you've ingested them.
 
 > [!NOTE]
 > These are **hunting & teaching artifacts**, not finished detections. Thresholds are realistic starting points; the data deliberately mixes attacker activity with benign noise so an over-broad rule visibly over-fires.
@@ -61,19 +61,21 @@ flowchart TD
 | 08:05 | Initial Access | [T1566](https://attack.mitre.org/techniques/T1566/) | `EmailEvents` | Lookalike-domain phish **Delivered** to priya.menon + alexw (ZAP missed it) |
 | 08:20 | Valid Accounts / Brute Force | [T1078](https://attack.mitre.org/techniques/T1078/) · [T1110](https://attack.mitre.org/techniques/T1110/) | `SigninLogs` | Failures then a **high-risk success** from `185.220.101.2` (NL) |
 | 08:35 | Lateral / Remote Services | [T1021.001](https://attack.mitre.org/techniques/T1021/001/) | `DeviceLogonEvents` | **RemoteInteractive** logon onto `FIN-WS-07` from the attacker IP |
-| 08:40–09:30 | Execution / Ingress / Cred Access | [T1059](https://attack.mitre.org/techniques/T1059/) · [T1105](https://attack.mitre.org/techniques/T1105/) · [T1003](https://attack.mitre.org/techniques/T1003/) | `DeviceEvents` · `DeviceFileEvents` | LOLBins, AMSI catch; payload dropped from `badupdate-cdn.com`; cred-dumper renamed; finance docs zipped |
+| 08:40–09:30 | Execution / Ingress / Cred Access | [T1059.001](https://attack.mitre.org/techniques/T1059/001/) · [T1105](https://attack.mitre.org/techniques/T1105/) · [T1003](https://attack.mitre.org/techniques/T1003/) | `DeviceProcessEvents` · `DeviceEvents` · `DeviceFileEvents` | Process tree **winword → encoded PowerShell → LOLBins**; AMSI catch; payload from `badupdate-cdn.com`; cred-dumper renamed; finance docs zipped |
 | 08:50–09:25 | (parallel) Linux foothold | [T1110](https://attack.mitre.org/techniques/T1110/) · [T1548.003](https://attack.mitre.org/techniques/T1548/003/) · [T1003.008](https://attack.mitre.org/techniques/T1003/008/) | `Syslog` · `LinuxAuditLog` | SSH brute force on `WEB-APP-01` → sudo → `/etc/shadow` read → auditd tamper |
 | 09:00 | Lateral / Persistence | [T1110.003](https://attack.mitre.org/techniques/T1110/003/) · [T1136.001](https://attack.mitre.org/techniques/T1136/001/) | `SecurityEvent` | Spray→logon on `DC01`; 4672 special privileges; **4720 account created** |
-| 09:15 | Command & Control | [T1071.004](https://attack.mitre.org/techniques/T1071/004/) · [T1568.002](https://attack.mitre.org/techniques/T1568/002/) | `DnsEvents` | Beaconing + **DGA subdomains** to `badupdate-cdn.com`, NXDOMAIN spikes |
+| 09:15 | Command & Control | [T1071.004](https://attack.mitre.org/techniques/T1071/004/) · [T1071.001](https://attack.mitre.org/techniques/T1071/001/) · [T1568.002](https://attack.mitre.org/techniques/T1568/002/) | `DnsEvents` · `DeviceNetworkEvents` | DNS beaconing + **DGA subdomains** to `badupdate-cdn.com`; `powershell.exe` connections to the C2 IP |
 | 09:25 | Defense Evasion | [T1562.001](https://attack.mitre.org/techniques/T1562/001/) · [T1562.008](https://attack.mitre.org/techniques/T1562/008/) | `Heartbeat` · `Usage` | `WEB-APP-01` agent **goes silent**; `Syslog` ingestion **drops to 0** |
 | 09:30 | Persistence | [T1543.003](https://attack.mitre.org/techniques/T1543/003/) | `Event` | Malicious **7045 service install** on `DC01` |
-| 10:00 | Privilege Escalation | [T1098.003](https://attack.mitre.org/techniques/T1098/003/) · [T1552.005](https://attack.mitre.org/techniques/T1552/005/) | `AzureActivity` | **roleAssignments/write** (Owner), **listKeys** on `stcontosofin`, NSG opened |
-| 10:20 | Exfiltration | [T1530](https://attack.mitre.org/techniques/T1530/) · [T1567](https://attack.mitre.org/techniques/T1567/) | `StorageBlobLogs` | **AccountKey + Anonymous** GetBlob burst of finance blobs |
+| 09:40 | Privilege Escalation (Entra) | [T1098.003](https://attack.mitre.org/techniques/T1098/003/) · [T1528](https://attack.mitre.org/techniques/T1528/) | `AuditLogs` | alexw self-added to a **privileged directory role**; rogue **app consent** + client secret |
+| 10:00 | Privilege Escalation (Azure) | [T1098.003](https://attack.mitre.org/techniques/T1098/003/) · [T1552.005](https://attack.mitre.org/techniques/T1552/005/) | `AzureActivity` | **roleAssignments/write** (Owner), **listKeys** on `stcontosofin`, NSG opened |
+| 10:20 | Exfiltration | [T1530](https://attack.mitre.org/techniques/T1530/) · [T1567](https://attack.mitre.org/techniques/T1567/) | `StorageBlobLogs` · `CommonSecurityLog` | **AccountKey + Anonymous** GetBlob burst; the firewall logs a **>1 GB egress** to the attacker IP |
 | 10:40 | Credential Access | [T1555.006](https://attack.mitre.org/techniques/T1555/006/) | `AzureDiagnostics` | **Key Vault** SecretGet/KeyGet on `kv-contoso-prod` after the role grant |
 | 10:30–11:00 | Defense Evasion | [T1565](https://attack.mitre.org/techniques/T1565/) · [T1556](https://attack.mitre.org/techniques/T1556/) | `DnsAuditEvents` | Rogue DNS records + malicious forwarder planted on `DC01` |
 | 11:00 | Container Exec / Cred Access | [T1609](https://attack.mitre.org/techniques/T1609/) · [T1552.007](https://attack.mitre.org/techniques/T1552/007/) · [T1098](https://attack.mitre.org/techniques/T1098/) | `AKSAudit` · `AKSAuditAdmin` | `pods/exec`, secret reads, **clusterrolebinding → cluster-admin**, logging deleted |
+| 08:20–11:00 | *(Detection & Response)* | — | `SecurityAlert` · `SecurityIncident` · `Alert` | The attack trips **12 product alerts**, grouped into **incident #4471** (New→Active→Closed *TruePositive*) |
 
-🔖 Load the full coverage map into [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/): **[`mitre-navigator-layer.json`](mitre-navigator-layer.json)** (45 techniques).
+🔖 Load the full coverage map into [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/): **[`mitre-navigator-layer.json`](mitre-navigator-layer.json)** (45 techniques). The detection layer (`SecurityAlert`/`SecurityIncident`) is the **defender's** view of the same timeline — start triage there and pivot down into the raw tables.
 
 ---
 
@@ -199,6 +201,28 @@ ASimAgentEventLogs
     | project ActorUsername = UserPrincipalName, SigninRisk = RiskLevelDuringSignIn
 ) on ActorUsername
 | sort by TimeGenerated asc
+```
+
+### 9. Incident → alerts → entities *(SecurityIncident → SecurityAlert, the SOC's starting point)*
+The defender's view: take the current state of an incident, expand its bundled alerts, and pull the impacted entities out of the alert JSON — one query from "an incident opened" to "here's who/what is involved."
+```kusto
+SecurityIncident
+| summarize arg_max(LastModifiedTime, *) by IncidentNumber   // collapse the change-log to current state
+| where Status != "Closed" or Classification == "TruePositive"
+| mv-expand AlertId = AlertIds to typeof(string)
+| join kind=inner (
+    SecurityAlert
+    | project SystemAlertId, AlertName, AlertSeverity, CompromisedEntity, Tactics, Entities
+) on $left.AlertId == $right.SystemAlertId
+| mv-apply Entity = parse_json(Entities) on (
+    where Entity.Type in ("account", "host", "ip")
+    | extend ImpactedEntity = coalesce(tostring(Entity.Name), tostring(Entity.HostName), tostring(Entity.Address))
+)
+| summarize Alerts = dcount(SystemAlertId),
+            MaxSeverity = max(AlertSeverity),
+            Entities = make_set(ImpactedEntity, 50),
+            Tactics = make_set(Tactics, 20) by IncidentNumber, Title
+| sort by IncidentNumber asc
 ```
 
 ---

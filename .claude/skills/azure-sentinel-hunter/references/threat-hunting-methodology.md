@@ -91,7 +91,7 @@ coverage and save the next hunter time):
 ## Bundled practice data
 
 The [Operation Quiet Ledger scenario](../../../../sentinel/tables/scenarios/operation-quiet-ledger/README.md)
-is a full intrusion across 18 tables with benign noise — ideal for rehearsing the loop end to end:
+is a full intrusion across two dozen tables with benign noise — ideal for rehearsing the loop end to end:
 form a hypothesis from one table, pivot to full blast radius, and write it up.
 
 References: [Hunt for threats with Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/hunting) ·
