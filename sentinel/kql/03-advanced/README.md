@@ -1,7 +1,8 @@
 # Stage 03 · Advanced KQL — Production techniques
 
 > **Audience:** SOC analysts advancing to threat hunting, detection engineers, architects.
-> **Tables:** this stage uses the **real** Sentinel tables (`SigninLogs`, `AuditLogs`, `SecurityEvent`, …). They return data only where the relevant connector is ingesting. If your workspace is empty, study the patterns here and adapt them to `DemoIdentityLogs`, or practise in an [ADX free cluster](../00-setup/README.md#method-2--azure-data-explorer-free-cluster--csv).
+> **Tables:** this stage uses the **real** Sentinel tables (`SigninLogs`, `AuditLogs`, `SecurityEvent`, …). They return data only where the relevant connector is ingesting.
+> **Empty workspace? Run these anyway.** The [Sentinel Table Library](../../tables/README.md) ships schema-true sample logs for these exact tables — ingest them into an [ADX free cluster](../00-setup/README.md#method-2--azure-data-explorer-free-cluster--csv) (or paste a `let datatable()` from its `csv_to_kql.py`) and the real-table queries below run as-is, returning the [Operation Quiet Ledger](../../tables/scenarios/operation-quiet-ledger/README.md) attack data.
 
 > ⚠️ **Real-table reminder:** in `SigninLogs`, `ResultType` is a **string** — use `ResultType != "0"`, not `!= 0`. (It's an int only in the demo set.) [SigninLogs reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/signinlogs)
 
@@ -77,6 +78,8 @@ SecurityEvent
 Logs often hide data inside strings or dynamic (JSON) columns.
 
 ### `parse` — split structured text into columns
+
+> 🧩 **Illustrative pattern — not runnable as-is.** `MyTable`/`Message` are placeholders for *whatever table holds a delimited string column*. Swap them for a real one (e.g. `Syslog`/`SyslogMessage` — see the [Syslog sample](../../tables/Syslog/README.md), whose hunts parse exactly this way).
 
 ```kusto
 // Message like: "SrcIP=10.0.0.1; DestIP=10.0.0.5; Action=Allow"
@@ -164,6 +167,9 @@ The **Advanced Security Information Model (ASIM)** gives Sentinel a standard sch
 > - The parser name needs the leading underscore: `_Im_Dns`, `_Im_Authentication` — not `Im_Dns`.
 > - **Filtering parameters in the call are lowercase** (`starttime=`, `responsecodename=`, `eventresult=`), even though the **output** fields are PascalCase (`ResponseCodeName`, `SrcIpAddr`).
 > Source: [Use ASIM parsers](https://learn.microsoft.com/en-us/azure/sentinel/normalization-about-parsers)
+
+> [!NOTE]
+> **ASIM parsers live in Microsoft Sentinel**, not in plain Log Analytics and **not in an ADX free cluster**. If `_Im_Authentication` returns *"unknown function"*, you're not in a Sentinel-enabled workspace — that's expected. Study the pattern here and run the raw-table equivalents (e.g. the `SigninLogs` failed-auth query in §1) against the [table library samples](../../tables/README.md) instead.
 
 ```kusto
 // Normalized DNS — filtering params (lowercase) run BEFORE parsing for speed
@@ -268,5 +274,12 @@ _Im_Authentication(starttime=ago(24h), eventresult='Failure')
 </details>
 
 ---
+
+## ✅ You'll know you've completed Stage 03 when you can
+
+- [ ] drill into a dynamic/JSON column (`tostring(InitiatedBy.user.userPrincipalName)`) and `mv-expand` an array;
+- [ ] pick the right `join` flavour (`inner`/`leftouter`/`leftanti`/`lookup`) for the question;
+- [ ] modularise a query with `let` and scope the time filter inside each subquery;
+- [ ] write a normalised `_Im_*` ASIM query with lowercase call params — and know it needs a Sentinel workspace.
 
 **Next:** [Stage 04 · Threat Hunting](../04-hunting/README.md) — MITRE-mapped hunts across identity and endpoint.

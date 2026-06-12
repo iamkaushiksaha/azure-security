@@ -166,6 +166,8 @@ Try these against `DemoIdentityLogs` before peeking at the answers.
 3. For sign-ins, add a column `Country` equal to `Location`, and show only sign-ins **not** from the United States.
 4. Find any record (sign-in or audit) that mentions the word `password`.
 
+> 🎯 **Check yourself** (against the seeded `DemoIdentityLogs`): **1** → **11** audit rows, newest is `itadmin` "Add member to group". **2** → **16** rows, only `alexw` (Netherlands) and `sophial` (Germany) — `jamest`'s `low`-risk failure is correctly excluded. **3** → **39** rows across four locations: `alexw`→Netherlands, `meganb`→UK, `sophial`→Germany, `itadmin`→India. **4** → **15** rows — more than you'd expect, because `search "password"` also matches *"Invalid username or **password**"*, not just the obvious resets. A good reminder that `search` casts a wide net.
+
 <details>
 <summary><b>Answers</b></summary>
 
@@ -207,6 +209,13 @@ DemoIdentityLogs
 - Forgetting `TimeGenerated` filters → slow queries on real data.
 - Using `==` when the real `SigninLogs.ResultType` needs `"0"` (string) → see [schema-gotchas](../reference/schema-gotchas.md).
 - Copy-pasting queries without reading them line by line.
+
+## ✅ You'll know you've completed Stage 01 when you can
+
+- [ ] read a piped query top-to-bottom and say what each line does to the rows;
+- [ ] filter with `where` (`==` vs `=~`, `has` vs `contains`) and always time-bound first;
+- [ ] choose columns with `project` and add one with `extend` + `iff`;
+- [ ] explain why the demo's `ResultType != 0` becomes `!= "0"` on the real `SigninLogs`.
 
 **Next:** [Stage 02 · Aggregation & Visualization](../02-aggregation-viz/README.md) — turn rows into insight with `summarize`, `bin()`, and `render`.
 

@@ -61,11 +61,12 @@ DemoIdentityLogs
 ```
 
 ```kusto
-// Distinct IPs per user (make_set) vs. ordered operation list (make_list)
+// make_set = de-duplicated (which IPs?) vs make_list = every occurrence, in order
 DemoIdentityLogs
-| where EventType == "Signin" and ResultType == 0
-| summarize IPAddresses = make_set(IPAddress) by UserPrincipalName
+| where EventType == "Signin"
+| summarize DistinctIPs = make_set(IPAddress), IPsInOrder = make_list(IPAddress) by UserPrincipalName
 ```
+Compare the two columns for `alexw`: `DistinctIPs` collapses to `["52.170.12.45","185.220.101.2"]`, while `IPsInOrder` keeps every attempt — so the repeated `185.220.101.2` failures are visible as a run.
 
 > `make_set` removes duplicates (good for "which IPs?"); `make_list` keeps every occurrence in order (good for "the sequence of actions").
 
@@ -173,6 +174,8 @@ Reference: [join operator](https://learn.microsoft.com/en-us/kusto/query/join-op
 3. For each user, list the **set of countries** (`Location`) they signed in from.
 4. Plot sign-in **failures per hour**, but only for `alexw@contoso.com`.
 
+> 🎯 **Check yourself** (against the seeded `DemoIdentityLogs`): **1** → 5 users, `alexw` highest with **10** failed, `sophial` 6, `jamest` 1, `meganb`/`itadmin` 0. **2** → "Add member to group" tops the bar chart. **3** → only `alexw` shows **two** countries (`United States`, `Netherlands`); everyone else one. **4** → a cluster of failure bars on the attack days, none for the quiet days.
+
 <details>
 <summary><b>Answers</b></summary>
 
@@ -207,5 +210,12 @@ DemoIdentityLogs
 </details>
 
 ---
+
+## ✅ You'll know you've completed Stage 02 when you can
+
+- [ ] pick the right aggregate (`count`/`countif`/`dcount`/`make_set`/`arg_max`) for a question;
+- [ ] bucket time with `bin()` and chart it with the correct `render` shape;
+- [ ] stack sources with `union` and correlate them with a `join` (and name the join flavour you used);
+- [ ] explain `make_set` vs `make_list` and when each matters.
 
 **Next:** [Stage 03 · Advanced](../03-advanced/README.md) — parsing dynamic data, modular `let`, ASIM parsers, and visualization shaping on the **real** tables.

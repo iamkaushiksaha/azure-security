@@ -27,7 +27,7 @@ Both methods create the same object — a queryable thing called **`DemoIdentity
 
 **Columns:** `TimeGenerated`, `EventType` (Signin/Audit), `UserPrincipalName`, `IPAddress`, `AppDisplayName`, `ResultType`, `ResultDescription`, `RiskLevelDuringSignIn`, `Location`, `OperationName`, `AuditResult`, `Category`.
 
-> ⚠️ **One thing to know up front:** in this demo dataset `ResultType` is an **integer** (`0` = success). In the **real** `SigninLogs` table it's a **string** (`"0"` = success). So you'll use `ResultType != 0` here and `ResultType != "0"` in production. This is the single most common beginner trip-up — see [`../reference/schema-gotchas.md`](../reference/schema-gotchas.md). Confirmed in the [SigninLogs table reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/signinlogs).
+> ⚠️ **One thing to know up front:** in this demo dataset `ResultType` is an **integer** (`0` = success). In the **real** `SigninLogs` table it's a **string** (`"0"` = success). So you'll use `ResultType != 0` here and `ResultType != "0"` in production. This is a **deliberate teaching scaffold** — the integer reads naturally in the first `where` examples — and Stage 03 switches you to the real string form, so it's not an accident to "fix." It's also the single most common beginner trip-up — see [`../reference/schema-gotchas.md`](../reference/schema-gotchas.md). Confirmed in the [SigninLogs table reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/signinlogs).
 
 ---
 
@@ -37,12 +37,12 @@ This creates a **saved function** from a `datatable()`. No ingestion, no waiting
 
 1. Open **Microsoft Sentinel → Logs** (or **Log Analytics → Logs**), and make sure the editor is in **KQL mode**.
 2. Open [`seed-DemoIdentityLogs.kql`](seed-DemoIdentityLogs.kql), copy **Method A** (the whole `datatable(...)` block), paste it into the query editor, and select **Run**. You'll see 64 rows.
-3. In the results pane, select **Save → Save as function**.
-4. Fill in:
+3. In the results pane, select **Save → Save as function**. *(The **Save** control is on the query toolbar, top-left of the Logs editor; **Save as function** opens a small right-hand dialog — not **Save as query**.)*
+4. Fill in the dialog:
    - **Function name:** `DemoIdentityLogs`
    - **Legacy category:** `Functions`
    - Leave *Save as computer group* unchecked and *Function parameters* empty.
-5. Select **Save**.
+5. Select **Save**. *(The function now appears under **Functions** in the left-hand schema pane — type `DemoIdentityLogs` in a new tab and it autocompletes.)*
 
 **Verify** — open a new query tab and run:
 
@@ -74,11 +74,11 @@ Source: [What is a free Azure Data Explorer cluster?](https://learn.microsoft.co
 
 ### 2b. Load the CSV (UI path — easiest)
 
-1. In the [ADX web UI](https://dataexplorer.azure.com/home), select **Query** in the left pane.
-2. **Right-click your database → Get data**.
+1. In the [ADX web UI](https://dataexplorer.azure.com/home), select **Query** in the left pane. *(Your cluster and database show in the left tree; if it's empty, finish 2a first.)*
+2. **Right-click your database → Get data**. *(The database node, not the cluster — the context menu lists **Get data**.)*
 3. Source = **Local file**. Target = **+ New table** named `DemoIdentityLogsRaw`.
 4. **Browse** and select [`csv/demo_identity_logs.csv`](csv/demo_identity_logs.csv) → **Next**.
-5. On the **Inspect** tab, tick **First row header** so the column names map correctly → **Finish**.
+5. On the **Inspect** tab, tick **First row header** so the column names map correctly → **Finish**. *(The preview grid should now show `Offset`, `EventType`, `UserPrincipalName`… as column headers, not as a data row — that's how you know the toggle worked.)*
 
 Reference: [Get data from a local file](https://learn.microsoft.com/en-us/azure/data-explorer/get-data-file)
 

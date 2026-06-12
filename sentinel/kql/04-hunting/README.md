@@ -1,7 +1,8 @@
 # Stage 04 · Threat Hunting with KQL — MITRE-mapped hunts
 
 > **Audience:** threat hunters and detection engineers.
-> **Tables:** real Sentinel / Defender XDR tables. Each hunt notes the table it needs and the connector that fills it. No data yet? Read the patterns, then practise the *shape* on `DemoIdentityLogs` or an [ADX free cluster](../00-setup/README.md).
+> **Tables:** real Sentinel / Defender XDR tables. Each hunt notes the table it needs and the connector that fills it.
+> **▶️ Want to actually run these?** The [Sentinel Table Library](../../tables/README.md) ships schema-true sample logs for every table below — `SigninLogs`, `AuditLogs`, `DeviceProcessEvents`, `DeviceNetworkEvents`, and more — all woven into one [correlated intrusion ("Operation Quiet Ledger")](../../tables/scenarios/operation-quiet-ledger/README.md). Ingest them into an [ADX free cluster](../00-setup/README.md) (or paste a `let datatable()` from the library's `csv_to_kql.py`) and these hunts return **real hits** instead of empty results.
 > **Mapping:** every hunt is tagged with its [MITRE ATT&CK](https://attack.mitre.org/) technique so you can tie findings to a framework.
 
 Every column below was schema-validated against Microsoft Learn (see [`../reference/ms-reference-links.md`](../reference/ms-reference-links.md)). General hunting references: [Hunt for threats in Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/hunting) · [Advanced hunting in Defender XDR](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-overview).
@@ -177,11 +178,12 @@ DeviceNetworkEvents
 | where RemoteIPType == "Public"
 | where InitiatingProcessFileName in~ (interpreters)
 | summarize Connections = count(),
-            RemoteHosts = make_set(coalesce(RemoteUrl, RemoteIP), 50)
+            RemoteHosts = make_set(iff(isempty(RemoteUrl), RemoteIP, RemoteUrl), 50)
         by DeviceName, InitiatingProcessFileName, InitiatingProcessAccountName
 | sort by Connections desc
 ```
 **Triage:** interpreters making public connections is unusual on most endpoints. Pivot to B3 on the same device/command line.
+> Why `iff(isempty(...))` and not `coalesce(RemoteUrl, RemoteIP)`: in `DeviceNetworkEvents`, `RemoteUrl` is frequently an **empty string** (not null) when the connection was made to a bare IP. `coalesce` only falls back on *null*, so it would keep the blank; `iff(isempty(...))` falls back on blanks too.
 
 ---
 
@@ -190,10 +192,44 @@ DeviceNetworkEvents
 1. **Pick a hypothesis** (one of the above) and a time window.
 2. **Run broad**, eyeball the top results, then **tighten thresholds** to your environment's baseline.
 3. **Pivot** on a strong indicator — same user, IP, device, or command line — across tables.
-4. **Promote** a high-fidelity hunt into a scheduled **Analytics Rule** (governance: detections live as rules, not ad-hoc queries).
+4. **Promote** a high-fidelity hunt into a scheduled **Analytics Rule** (governance: detections live as rules, not ad-hoc queries) — see the mini-lab below.
 5. **Document** the technique ID, query, and triage notes so the next hunter can reuse it.
 
 > Promote-to-rule and ASIM normalization (Stage 03 §6) make these portable. Where a parser exists, an `_Im_Authentication`/`_Im_NetworkSession` version of A1–A4 / B4 will also catch non-AAD and non-MDE sources.
+
+## ⬆️ Mini-lab — promote a hunt into a detection
+
+A hunt finds something *once*; a **detection** finds it *continuously*. Take **B3 (encoded PowerShell)** above and turn it into a deployable rule:
+
+1. **Confirm it's high-fidelity.** Run B3 against the [`DeviceProcessEvents` sample](../../tables/DeviceProcessEvents/README.md) — it should return the `winword → powershell -enc` rows and little else.
+2. **Add entity columns** the incident needs: `project`-out `DeviceName` (Host), `AccountName` (Account), and the command line.
+3. **Scaffold the rule** from the query with the [Azure Sentinel Hunter skill](../../../.claude/skills/azure-sentinel-hunter/SKILL.md):
+   ```bash
+   python3 .claude/skills/azure-sentinel-hunter/scripts/scaffold_analytic_rule.py \
+       --name "Encoded PowerShell from Office process" \
+       --query-file b3.kql --severity High \
+       --tactics Execution --techniques T1059.001 \
+       --host-col DeviceName --account-col AccountName > rule.yaml
+   ```
+4. **Finish it** — required connectors, a false-positive note, and a `queryFrequency`/`queryPeriod`.
+5. **Study a worked example:** [`storage-key-theft-blob-exfil.yaml`](../../analytic-rules/credential-access/storage-key-theft-blob-exfil.yaml) is a complete, sample-tested rule built exactly this way — read it end-to-end, including its inline validation evidence.
+
+Detection engineering (rule types, entity mapping, FP-tuning, deploy-as-code) has its own guide in the skill: [`references/detection-engineering.md`](../../../.claude/skills/azure-sentinel-hunter/references/detection-engineering.md).
+
+## 🎓 Capstone — hunt the whole intrusion
+
+Single-table hunts are the warm-up. The real skill is **correlation**: chaining tables to reconstruct an intrusion and scope its blast radius. The [**Operation Quiet Ledger** scenario](../../tables/scenarios/operation-quiet-ledger/README.md) is one attack captured across two dozen tables with benign noise mixed in. Try this, start to finish:
+
+1. Start from **A1 (password spray)** on the `SigninLogs` sample → find the attacker IP.
+2. Pivot that IP into `DeviceLogonEvents` (the RDP), `AzureActivity` (the `listKeys`), and `StorageBlobLogs` (the exfil) — the scenario's cross-table join queries show the moves.
+3. Write it up with the skill's [hunt-report template](../../../.claude/skills/azure-sentinel-hunter/templates/hunt-report.md), then promote your best finding to a rule.
+
+## ✅ You'll know you've completed Stage 04 when you can
+
+- [ ] read any hunt here and say **which table, which column, and which ATT&CK technique** it targets;
+- [ ] run a hunt against the table-library sample data and explain why each hit is/isn't a true positive;
+- [ ] **pivot** a single indicator (IP/user/device) across at least three tables;
+- [ ] **promote** a high-fidelity hunt into a scheduled analytic rule with entities and a tuning note.
 
 ---
 
