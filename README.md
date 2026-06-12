@@ -30,6 +30,12 @@ The goal is to move beyond copy‑paste queries and help practitioners **think l
 
 All documentation follows a **consistent enterprise documentation standard**.
 
+### ⭐ Featured
+
+- **[KQL Mastery Path](sentinel/kql/README.md)** — a 5-stage course from novice to threat hunter, runnable even with an empty workspace.
+- **[Sentinel Table Library](sentinel/tables/README.md)** — 21 schema-validated tables, each with sample logs, gotchas, and MITRE-mapped hunts, woven into one correlated [attack scenario](sentinel/tables/scenarios/operation-quiet-ledger/README.md) for triage and analytic-rule testing.
+- **[Azure Sentinel Hunter skill](.claude/skills/azure-sentinel-hunter/SKILL.md)** — a reusable KQL / detection-engineering / threat-hunting skill (methodology, references, scripts, rule templates).
+
 ---
 
 ## 📂 Repository Structure
@@ -43,8 +49,12 @@ azure-security/
 ├── sentinel/
 │   ├── docs/
 │   ├── kql/            # KQL Mastery Path — novice → threat hunter
+│   ├── tables/         # Table library — 21 schemas + sample logs + correlated scenario
 │   ├── sampledata/
 │   └── labs/
+├── .claude/
+│   └── skills/
+│       └── azure-sentinel-hunter/   # KQL / detection-engineering / threat-hunting skill
 ├── detections/
 ├── hunting/
 └── README.md
