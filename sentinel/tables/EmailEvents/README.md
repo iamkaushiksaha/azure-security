@@ -1,0 +1,150 @@
+# EmailEvents
+
+> **Category:** Microsoft Defender XDR (Microsoft Defender for Office 365 — advanced hunting)
+> **Connector / source:** Microsoft Defender XDR connector (streams the Defender for Office 365 `EmailEvents` advanced-hunting table into Sentinel/Log Analytics). Rows are emitted by Exchange Online Protection (EOP) + Defender for Office 365 as mail is filtered and delivered.
+> **Table plan:** Analytics (default). The Microsoft Learn page also flags **Basic log** support, so this table can be ingested under the Basic/Auxiliary plan to cut cost where full KQL is not required.
+> **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/emailevents
+
+## What this table is
+Each row represents **one email message as evaluated and delivered (or blocked) by Microsoft Defender for Office 365 / Exchange Online Protection**. A row is written when mail transits the filtering stack: it captures who sent it (from-header, envelope MAIL FROM, and relaying IP), who received it, the filtering verdict (spam/phish/malware), and what the service ultimately did with the message (delivered, junked, quarantined, replaced). Rows are merged over time, so the **`Latest*` columns** reflect post-delivery remediation such as Zero-hour Auto Purge (ZAP). In a SOC this table is the primary surface for **phishing and BEC investigation, mapping the blast radius of a malicious campaign by `NetworkMessageId`,** and measuring how often threats slipped past automatic protection (`DeliveryAction == "Delivered"` on a phish verdict).
+
+## Schema
+Full column list, validated against the Microsoft Learn reference. (Types are the KQL/Log Analytics types: string, int, long, real, datetime, bool, dynamic, guid.)
+
+| Column | Type | Description |
+|---|---|---|
+| TimeGenerated | datetime | Date and time (UTC) when the record was generated. |
+| AdditionalFields | dynamic | Additional information about the entity or event. |
+| AttachmentCount | int | Number of attachments in the email. |
+| AuthenticationDetails | string | Pass/fail verdicts by email authentication protocols (DMARC, DKIM, SPF, or combined CompAuth). |
+| BulkComplaintLevel | int | Bulk complaint level (BCL); higher means the email is more likely to generate complaints and thus more likely to be spam. |
+| Cc | dynamic | Addresses listed in the Cc field of the email. |
+| ConfidenceLevel | string | Confidence levels of any spam or phishing verdict. Spam shows SCL: skipped (-1), not spam (0,1), moderate (5,6), high (9). Phishing shows `High` or `Low`. |
+| Connectors | string | Custom instructions that define organizational mail flow and how the email was routed. |
+| Context | string | Configuration context data of the machine. |
+| DeliveryAction | string | Action taken at delivery: Delivered, Junked, Blocked, or Replaced. |
+| DeliveryLocation | string | Where the email landed: Inbox/Folder, On-premises/External, Junk, Quarantine, Failed, Dropped, Deleted items. |
+| DetectionMethods | string | Methods used to detect malicious/suspicious content (e.g., spoof DMARC, file detonation, URL reputation, fingerprint matching). *(See gotcha — the MS Learn description for this column is mislabeled.)* |
+| DistributionList | string | Name of the distribution list the recipient belonged to and to which the email was sent (top-level list if nested). |
+| EmailAction | string | Final action on the email based on verdict/policies/user actions (junk, add X-header, modify subject, redirect, delete, quarantine, no action, Bcc). |
+| EmailActionPolicy | string | Action policy that took effect (Antispam, Antispam phishing, Anti-phishing domain/user/graph impersonation, Anti-phishing spoof, Antimalware Safe Attachments, ETR, …). |
+| EmailActionPolicyGuid | string | Unique identifier of the policy that took effect. |
+| EmailClusterId | long | Identifier of the email cluster; emails are grouped by heuristic analysis of their content. |
+| EmailDirection | string | Email direction: Inbound, Outbound, Intra-org. |
+| EmailLanguage | string | Detected language of the email content. |
+| EmailSize | int | Size of the email message (bytes). |
+| ExchangeTransportRule | string | Mail flow (transport) rule that acted on the message in transit. |
+| ForwardingInformation | string | JSON array of forwarding details, including the forwarding user and forwarding type. |
+| InternetMessageId | string | Public-facing Message-ID set by the sending email system (RFC 822 header). |
+| IsFirstContact | bool | Whether this is the first contact between this sender and recipient. |
+| LastEventExecutionTime | datetime | Date and time (UTC) when the record was updated after merge. |
+| LatestDeliveryAction | string | Last known action attempted on the email by the service or by an admin (manual remediation / ZAP). |
+| LatestDeliveryLocation | string | Last known location of the email after any post-delivery action. |
+| NetworkMessageId | string | Unique identifier for the email generated by Office 365. **Primary email-side correlation key.** |
+| OrgLevelAction | string | Action taken on the email from an organization-level policy match. |
+| OrgLevelPolicy | string | Organizational policy that triggered the org-level action. |
+| RecipientDomain | string | Domain of the recipient. |
+| RecipientEmailAddress | string | Recipient email address (after distribution-list expansion). |
+| RecipientObjectId | string | Recipient's Microsoft Entra ID (Azure AD) object identifier. |
+| ReportId | string | Unique identifier for the event (row). |
+| SenderDisplayName | string | Display name in the From header, visible to recipients in their mail client. |
+| SenderFromAddress | string | Sender email address in the From header (visible to recipients). |
+| SenderFromDomain | string | Sender domain in the From header. *(See gotcha — the MS Learn description for this column is mislabeled.)* |
+| SenderIPv4 | string | IPv4 address of the last detected mail server that relayed the message. |
+| SenderIPv6 | string | IPv6 address of the last detected mail server that relayed the message. |
+| SenderMailFromAddress | string | Sender email address in the MAIL FROM (envelope / Return-Path) header. |
+| SenderMailFromDomain | string | Sender domain in the MAIL FROM (envelope / Return-Path) header. |
+| SenderObjectId | string | Sender's Microsoft Entra ID object identifier. *(See gotcha — the MS Learn description for this column is mislabeled.)* |
+| SourceSystem | string | Type of agent that collected the event. |
+| Subject | string | Email subject. |
+| TenantId | string | The Log Analytics workspace ID. |
+| ThreatClassification | string | Threat classification of the mail (e.g., Phish, Spam, Malware, Business Email Compromise). |
+| ThreatNames | string | Detection/threat names assigned to the message. *(See gotcha — the MS Learn description for this column is mislabeled.)* |
+| ThreatTypes | string | Verdict from the filtering stack on whether the email contains Malware, Phish, Spam, or other threats. |
+| To | dynamic | Addresses listed in the To field of the email. |
+| Type | string | The name of the table. |
+| UrlCount | int | Number of embedded URLs in the email. |
+| UserLevelAction | string | Action taken on the email from a recipient mailbox-policy match. |
+| UserLevelPolicy | string | End-user mailbox policy that triggered the user-level action. |
+| _BilledSize | real | The record size in bytes. |
+| _IsBillable | string | Whether ingesting the record is billable (`false` = not billed). |
+
+> All **57 columns** from the reference page are listed above; none are grouped away. `AdditionalFields`, `Cc`, `To`, and `ForwardingInformation` are the dynamic/JSON-bearing columns.
+
+## Key columns for detection & hunting
+- **Identity (sender):** `SenderFromAddress` (From header, what the user sees), `SenderMailFromAddress` / `SenderMailFromDomain` (envelope MAIL FROM — compare the two to spot spoofing), `SenderDisplayName`, `SenderObjectId` (Entra object id if internal).
+- **Identity (recipient):** `RecipientEmailAddress`, `RecipientDomain`, `RecipientObjectId`. One row per recipient, so a single campaign produces N rows sharing one `NetworkMessageId`.
+- **Host / device:** n/a — this is mail telemetry, not endpoint. The endpoint pivot is via `DeviceEvents`/`DeviceNetworkEvents` once a user clicks (see *Correlates with*).
+- **Network:** `SenderIPv4` / `SenderIPv6` — the last relaying mail server (the closest thing to a source IP for the message).
+- **Outcome / verdict:** `ThreatTypes` and `ThreatClassification` (what it was judged to be), `ConfidenceLevel` (`High`/`Low` for phish; SCL for spam), `DetectionMethods` (how it was caught), and the disposition pair `DeliveryAction` + `DeliveryLocation` vs the post-delivery `LatestDeliveryAction` + `LatestDeliveryLocation`.
+- **Timestamps:** `TimeGenerated` (record generated) and `LastEventExecutionTime` (post-merge update — use this to see when ZAP/remediation re-touched the row).
+- **Join keys (to other tables):** `NetworkMessageId` (→ `EmailUrlInfo`, `EmailAttachmentInfo`, `EmailPostDeliveryEvents`), `RecipientEmailAddress` / `RecipientObjectId` (→ `IdentityLogonEvents`, `SigninLogs`), `SenderIPv4` (→ network tables), `InternetMessageId` (cross-system message correlation).
+
+## ⚠️ Schema gotchas
+- **Several MS Learn descriptions are copy-paste errors — do not trust the prose, trust the column name.** On the reference page, `DetectionMethods`, `SenderFromDomain`, `ThreatNames`, and `SenderObjectId` all carry a description copied from a *different* column (e.g. `DetectionMethods` is described as "Delivery action…", `SenderFromDomain`/`ThreatNames`/`SenderObjectId` are described as "Sender email address in the from header…"). The columns themselves behave as their names imply; this README gives the corrected descriptions.
+- **`DeliveryAction` ≠ `LatestDeliveryAction`.** The first is the disposition at original delivery; the second reflects later remediation (ZAP, admin purge). A phish can show `DeliveryAction = "Delivered"` but `LatestDeliveryAction = "Moved to junk"` after ZAP — and if ZAP *missed*, both stay `Delivered`. Always check both.
+- **Almost every verdict/disposition column is a `string`, not an enum/int.** `ThreatTypes`, `DeliveryAction`, `DeliveryLocation`, `ConfidenceLevel`, `DetectionMethods` are free-form strings — filter with `has`/`in~`/`==` and expect mixed casing and occasional blanks (mail with no verdict leaves `ThreatTypes` empty).
+- **`UrlCount` / `AttachmentCount` are counts only.** The actual URLs and files live in `EmailUrlInfo` / `EmailAttachmentInfo`; join on `NetworkMessageId` to enumerate them.
+- **One email = many rows.** Multiple recipients (and distribution-list expansion) each produce a row. De-duplicate on `NetworkMessageId` when counting *messages*; keep all rows when counting *recipients hit*.
+
+## 🧪 Sample data
+[`EmailEvents_sample.csv`](EmailEvents_sample.csv) — 18 rows. A spear-phish from the lookalike domain `login-contoso-sso.com` (relay `91.219.236.18`) reaches **priya.menon@contoso.com** *and* **alexw@contoso.com** with `DeliveryAction=Delivered` because ZAP missed it (`LatestDeliveryAction=Delivered`), while benign business mail flows to **meganb**/**jamest** and routine outbound/intra-org traffic provides the noise floor.
+The sample uses this curated subset of **real** columns: `TimeGenerated`, `NetworkMessageId`, `InternetMessageId`, `SenderFromAddress`, `SenderMailFromAddress`, `SenderDisplayName`, `SenderIPv4`, `RecipientEmailAddress`, `RecipientDomain`, `Subject`, `EmailDirection`, `ThreatTypes`, `ThreatClassification`, `ConfidenceLevel`, `DetectionMethods`, `DeliveryAction`, `DeliveryLocation`, `LatestDeliveryAction`, `LatestDeliveryLocation`, `UrlCount`, `AttachmentCount`, `AuthenticationDetails`. This is the **08:05 delivery step** of *Operation Quiet Ledger* — the phish `NetworkMessageId` `7f3e2a1b-9c4d-4e6f-8a2b-1d3c5e7f9a0b` is the pivot the rest of the scenario follows.
+
+## 🎯 Threat-hunting hypotheses (single-table)
+
+### H1 · Phish that slipped past ZAP — [T1566.002](https://attack.mitre.org/techniques/T1566/002/)
+**Hypothesis:** A message with a Phish verdict was delivered to the inbox and was *still* in the inbox after post-delivery processing (ZAP missed it).
+```kusto
+EmailEvents
+| where ThreatTypes has "Phish" or ThreatClassification has "Phish"
+| where DeliveryAction == "Delivered" and DeliveryLocation == "Inbox/Folder"
+| where LatestDeliveryAction == "Delivered" and LatestDeliveryLocation == "Inbox/Folder"
+| project TimeGenerated, NetworkMessageId, SenderFromAddress, SenderIPv4, RecipientEmailAddress, Subject, ConfidenceLevel, DetectionMethods
+```
+**Triage:** True positive = a high-confidence phish from an external lookalike domain sitting in a user's inbox; benign = a graymail/marketing message mis-tagged `Low` that the user can self-report.
+
+### H2 · Lookalike / spoofed sender via auth failure — [T1566.001](https://attack.mitre.org/techniques/T1566/001/)
+**Hypothesis:** Inbound mail impersonating the corporate domain fails authentication (SPF/DKIM/DMARC) while claiming a contoso-style From address.
+```kusto
+EmailEvents
+| where EmailDirection == "Inbound"
+| where AuthenticationDetails has_any ("SPF=fail","DKIM=fail","DMARC=fail","compauth=fail")
+| where SenderFromAddress has "contoso" and RecipientDomain == "contoso.com"
+| project TimeGenerated, SenderFromAddress, SenderMailFromAddress, SenderIPv4, RecipientEmailAddress, AuthenticationDetails, ThreatTypes, DeliveryAction
+```
+**Triage:** True positive = `login-contoso-sso.com` / non-contoso envelope domain failing auth but spoofing the brand; benign = a legitimate partner whose DMARC is misconfigured (verify the relaying IP and history).
+
+### H3 · One message, many recipients (campaign blast radius) — [T1534](https://attack.mitre.org/techniques/T1534/)
+**Hypothesis:** A single malicious `NetworkMessageId` was delivered to multiple internal recipients — surface every mailbox in the campaign.
+```kusto
+EmailEvents
+| where ThreatTypes has "Phish"
+| summarize Recipients = make_set(RecipientEmailAddress), DeliveredCount = countif(DeliveryAction == "Delivered"), FirstSeen = min(TimeGenerated)
+    by NetworkMessageId, SenderFromAddress, Subject
+| where array_length(Recipients) > 1
+```
+**Triage:** True positive = the same phish hit several users (e.g. priya.menon and alexw) — pull the URL/attachment rows for that id and check who clicked; benign = an internal newsletter to a distribution list.
+
+### H4 · Malicious attachment delivered — [T1566.001](https://attack.mitre.org/techniques/T1566/001/)
+**Hypothesis:** Mail carrying attachments received a Malware/Phish verdict yet was not blocked.
+```kusto
+EmailEvents
+| where AttachmentCount > 0
+| where ThreatTypes has_any ("Malware","Phish")
+| where DeliveryAction != "Blocked"
+| project TimeGenerated, NetworkMessageId, SenderFromAddress, RecipientEmailAddress, Subject, AttachmentCount, ThreatTypes, DetectionMethods, DeliveryAction
+```
+**Triage:** True positive = an attachment-bearing threat delivered to a user (pivot to `EmailAttachmentInfo` for the file hash); benign = a known-good sender whose attachment tripped a heuristic and was already auto-remediated.
+
+## 🔗 Correlates with
+- **EmailUrlInfo** on `NetworkMessageId` — enumerate the actual embedded URLs (`UrlCount` only gives the number); pivot here to get the phishing link domain for blocklisting.
+- **EmailAttachmentInfo** on `NetworkMessageId` — get file names/SHA256 for any attachment to hand to endpoint hunting.
+- **EmailPostDeliveryEvents** on `NetworkMessageId` — see ZAP/admin remediation actions taken *after* delivery (confirms whether the inbox copy was ever pulled).
+- **SigninLogs / IdentityLogonEvents** on `RecipientEmailAddress` ↔ `UserPrincipalName` — tie a delivered phish to the recipient's subsequent risky sign-in (e.g. alexw's 08:20 NL logon in *Operation Quiet Ledger*).
+- **UrlClickEvents** on `NetworkMessageId` — confirm whether a delivered URL was actually clicked (Safe Links time-of-click telemetry).
+
+## 📚 References
+- EmailEvents table reference — https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/emailevents
+- Defender for Office 365 advanced hunting — EmailEvents schema — https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-emailevents-table
+- Zero-hour auto purge (ZAP) in Microsoft Defender for Office 365 — https://learn.microsoft.com/en-us/defender-office-365/zero-hour-auto-purge
