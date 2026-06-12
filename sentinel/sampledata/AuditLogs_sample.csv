@@ -1,4 +1,3 @@
-
 TimeGenerated,ActivityDateTime,OperationName,AADOperationType,ActivityDisplayName,ResultType,Identity,TargetResources,AADTenantId
 2026-02-07T11:00:00Z,2026-02-07T11:00:00Z,Add member to group,Add,Added user to security group,Success,admin@contoso.com,"[{'id':'group1','type':'Group','userPrincipalName':'user3@contoso.com'}]",contosoTenant
 2026-02-07T11:15:00Z,2026-02-07T11:15:00Z,Reset user password,Update,User password reset,Success,helpdesk@contoso.com,"[{'id':'user2@contoso.com','type':'User'}]",contosoTenant

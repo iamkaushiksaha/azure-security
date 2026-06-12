@@ -3,6 +3,13 @@
 > **Purpose:** Environment setup + `SigninLogs` ingestion  
 > **Outcome:** Local, Sentinel-like KQL practice environment
 
+> [!TIP]
+> This lab uses a simplified `SigninLogs` sample. Once you're comfortable, graduate to the
+> [Sentinel Table Library](../tables/README.md) — **27 schema-true tables** with a correlated
+> [attack scenario](../tables/scenarios/operation-quiet-ledger/README.md). Generate ready-to-run
+> ADX ingest for any of them with `csv_to_kql.py` (see the
+> [Azure Sentinel Hunter skill](../../.claude/skills/azure-sentinel-hunter/SKILL.md)).
+
 ---
 
 ## 🎯 Lab Objective
