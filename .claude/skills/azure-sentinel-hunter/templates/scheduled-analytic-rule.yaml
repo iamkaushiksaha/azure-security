@@ -1,0 +1,82 @@
+# Microsoft Sentinel — Scheduled Analytic Rule (repository / API format)
+# Worked example: Entra sign-in success from a NEW ASN immediately after a failure
+# burst (credential-attack success). Edit, then deploy via the Sentinel
+# repositories CI/CD connection or the alertRules API. See
+# references/detection-engineering.md for the why behind each field.
+
+id: 00000000-0000-0000-0000-000000000000          # replace with a real GUID
+name: Sign-in success from new ASN after failure burst
+kind: Scheduled
+description: |
+  Hypothesis: an account brute-forced/sprayed from attacker infrastructure, then a
+  SUCCESSFUL sign-in arrives from an Autonomous System the user has never used in the
+  last 14 days. Catches account takeover that single-table failure-count rules miss.
+  Known false positives: corporate VPN/proxy ASN changes, travel, a new mobile carrier.
+  Tune via the IPAllowlist watchlist and the 14d baseline window.
+severity: High
+status: Available
+requiredDataConnectors:
+  - connectorId: AzureActiveDirectory
+    dataTypes:
+      - SigninLogs
+queryFrequency: PT1H
+queryPeriod: PT14D            # period > frequency: needs 14d history to define "new ASN"
+triggerOperator: gt
+triggerThreshold: 0
+tactics:
+  - CredentialAccess
+  - InitialAccess
+relevantTechniques:
+  - T1110
+  - T1078
+query: |
+  let lookback = 1h;
+  let baseline = 14d;
+  // ASNs each user legitimately used in the trailing baseline (excluding the live window)
+  let knownAsn =
+      SigninLogs
+      | where TimeGenerated between (ago(baseline) .. ago(lookback))
+      | where ResultType == "0"
+      | summarize KnownASNs = make_set(AutonomousSystemNumber) by UserPrincipalName;
+  // recent failure burst per user (the "attack" side)
+  let burst =
+      SigninLogs
+      | where TimeGenerated > ago(lookback) and ResultType != "0"
+      | summarize Failures = count() by UserPrincipalName
+      | where Failures >= 8;
+  SigninLogs
+  | where TimeGenerated > ago(lookback) and ResultType == "0"
+  | join kind=inner burst on UserPrincipalName
+  | join kind=leftouter knownAsn on UserPrincipalName
+  | where not(set_has_element(KnownASNs, AutonomousSystemNumber))
+  | project TimeGenerated, UserPrincipalName, IPAddress, AutonomousSystemNumber,
+            Location, RiskLevelDuringSignIn, Failures, AppDisplayName
+  | sort by TimeGenerated desc
+entityMappings:
+  - entityType: Account
+    fieldMappings:
+      - identifier: FullName
+        columnName: UserPrincipalName
+  - entityType: IP
+    fieldMappings:
+      - identifier: Address
+        columnName: IPAddress
+customDetails:
+  FailureCount: Failures
+  SourceASN: AutonomousSystemNumber
+  SignInRisk: RiskLevelDuringSignIn
+alertDetailsOverride:
+  alertDisplayNameFormat: "ATO suspected: {{UserPrincipalName}} success from new ASN {{AutonomousSystemNumber}}"
+  alertSeverityColumnName: RiskLevelDuringSignIn
+eventGroupingSettings:
+  aggregationKind: AlertPerResult     # each compromised account is its own actionable alert
+incidentConfiguration:
+  createIncident: true
+  groupingConfiguration:
+    enabled: true
+    reopenClosedIncident: false
+    lookbackDuration: PT5H
+    matchingMethod: AllEntities       # fold alerts sharing entities into one incident
+suppressionEnabled: false
+suppressionDuration: PT1H
+version: 1.0.0

@@ -1,0 +1,40 @@
+# Microsoft Sentinel — Hunting Query (repository / API format)
+# Hunting queries do NOT auto-alert; analysts run them or schedule them, and you
+# PROMOTE high-fidelity ones to a scheduled analytic rule. Keep the hypothesis in
+# the description so the next hunter understands intent. See
+# references/threat-hunting-methodology.md.
+
+id: 00000000-0000-0000-0000-000000000000          # replace with a real GUID
+name: DNS beaconing - low-jitter periodic lookups to rare domains
+kind: hunting
+description: |
+  Hypothesis: a host is using DNS for C2, producing periodic lookups (low jitter)
+  to a rare/low-reputation domain, possibly with DGA-style subdomains and NXDOMAIN
+  spikes. Pivot any hit to the device's process/network activity and the resolved
+  IPs. Refute if the domain is known telemetry/CDN/monitoring traffic.
+requiredDataConnectors:
+  - connectorId: DNS
+    dataTypes:
+      - DnsEvents
+tactics:
+  - CommandAndControl
+relevantTechniques:
+  - T1071.004
+  - T1568.002
+query: |
+  let lookback = 1d;
+  DnsEvents
+  | where TimeGenerated > ago(lookback) and SubType == "LookupQuery"
+  | where isnotempty(Name)
+  | order by ClientIP, Name, TimeGenerated asc
+  | serialize delta = datetime_diff('second', TimeGenerated, prev(TimeGenerated))
+  | summarize Lookups = count(), Jitter = stdev(delta), AvgInterval = avg(delta),
+              NxDomain = countif(ResultCode != 0), Subs = dcount(Name)
+          by ClientIP, RegisteredDomain = strcat_array(array_slice(split(Name, "."), -2, -1), ".")
+  | where Lookups >= 12 and Jitter < 45        // tune to your beacon tolerance
+  | sort by Lookups desc
+tags:
+  - hypothesis: Periodic low-jitter DNS to a rare domain indicates C2 over DNS.
+  - pivot: ClientIP -> DeviceNetworkEvents/DeviceProcessEvents; Name -> ThreatIntelligenceIndicator
+  - promote-if: a specific domain/host pattern proves high-fidelity across a week of data
+version: 1.0.0

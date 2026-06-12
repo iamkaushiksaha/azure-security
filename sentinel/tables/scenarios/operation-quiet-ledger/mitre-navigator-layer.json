@@ -1,0 +1,351 @@
+{
+  "name": "Operation Quiet Ledger \u2014 Sentinel Table Library",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Techniques exercised by the correlated sample-log scenario in sentinel/tables/. Each technique maps to one or more table sample CSVs. Source: azure-security repo.",
+  "techniques": [
+    {
+      "techniqueID": "T1566.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "EmailEvents \u2014 spear-phishing attachment/link delivered to priya.menon & alexw",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1566.002",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "EmailEvents \u2014 phishing link (login-contoso-sso.com)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1078",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SigninLogs \u2014 valid account used after compromise",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1078.004",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AzureActivity/AzureDiagnostics/StorageBlobLogs \u2014 cloud account abuse",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1110",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SigninLogs/Syslog/DeviceLogonEvents \u2014 brute force",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1110.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SecurityEvent \u2014 password guessing",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1110.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SigninLogs/SecurityEvent \u2014 password spray",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceLogonEvents/SecurityEvent \u2014 RDP onto FIN-WS-07",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceEvents/ASimAgentEventLogs \u2014 command execution",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SecurityEvent/DeviceEvents \u2014 encoded PowerShell",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.004",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "LinuxAuditLog/Syslog \u2014 bash on WEB-APP-01",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1218",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceEvents \u2014 mshta/rundll32 LOLBins",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1105",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceFileEvents \u2014 payload pulled from badupdate-cdn.com",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1036.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceFileEvents \u2014 cred-dumper renamed to svchost_helper.exe",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceFileEvents \u2014 lsass.dmp / creds.txt",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.008",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "LinuxAuditLog \u2014 /etc/shadow & /etc/passwd read",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1560.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceFileEvents \u2014 finance docs zipped (password-protected)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1543.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "Event \u2014 malicious 7045 service install on DC01 (persistence)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1136.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "SecurityEvent \u2014 4720 local account created on DC01",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1098",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAuditAdmin \u2014 clusterrolebinding patched to cluster-admin",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1098.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AzureActivity \u2014 roleAssignments/write to Owner/Contributor",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1548.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "Syslog \u2014 sudo to root on WEB-APP-01",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1568.002",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DnsEvents \u2014 DGA subdomains for C2",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceEvents \u2014 C2 over HTTPS",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.004",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DnsEvents \u2014 C2 over DNS (TXT)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1556",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DnsAuditEvents \u2014 DNS records modified to subvert resolution",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1565",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DnsAuditEvents \u2014 rogue records / malicious forwarder planted",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1565.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "ASimAgentEventLogs \u2014 stored data manipulated via AI agent",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1552.005",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AzureActivity \u2014 listKeys / storage account keys",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1552.007",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAudit \u2014 container API service-account token access",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1555.006",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AzureDiagnostics \u2014 Key Vault secret/key harvest",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1528",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAuditAdmin \u2014 Kubernetes serviceaccount token minted",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1530",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "StorageBlobLogs \u2014 finance blobs read from cloud storage",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1567",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "StorageBlobLogs \u2014 exfil to attacker-controlled access",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1567.002",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "OfficeActivity/StorageBlobLogs \u2014 exfil to cloud storage/sharing",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1609",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAudit \u2014 kubectl exec into running pod",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1610",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAuditAdmin \u2014 deploy debug/privileged container",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1613",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AKSAudit \u2014 container & resource discovery",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1114.003",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "OfficeActivity \u2014 malicious auto-forward inbox rule",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1213",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "ASimAgentEventLogs \u2014 data from information repositories via agent",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.001",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "Heartbeat/LinuxAuditLog/AKSAuditAdmin \u2014 disable/kill security tooling",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.007",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "AzureActivity \u2014 disable cloud firewall (NSG opened)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.008",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "Usage \u2014 telemetry source silenced (Syslog \u2192 0)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "Heartbeat \u2014 indicator removal (agent killed)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070.008",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "OfficeActivity \u2014 mailbox/evidence deletion",
+      "enabled": true
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#fd8d3c",
+      "#e31a1c"
+    ],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {
+      "label": "Exercised by sample data",
+      "color": "#fd8d3c"
+    }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "sorting": 3,
+  "layout": {
+    "layout": "side",
+    "showName": true,
+    "showID": true
+  },
+  "hideDisabled": false
+}
