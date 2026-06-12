@@ -1,0 +1,107 @@
+# Microsoft Sentinel — Scheduled Analytic Rule
+# Built with the azure-sentinel-hunter skill: schema-verified against the table
+# library, tested against the Operation Quiet Ledger sample data (see Validation).
+id: a7f3c2e1-9b4d-4e8a-b6c1-2f5d8e0a1c3b          # replace with a unique GUID per workspace
+name: Storage account key theft followed by bulk blob exfiltration
+kind: Scheduled
+description: |
+  Hypothesis: an actor who can read a storage account's keys (control plane,
+  Microsoft.Storage/storageAccounts/listKeys) then uses that shared key to bulk-download
+  blobs (data plane, AuthenticationType=AccountKey) — bypassing Entra ID, so the blob
+  logs carry NO user identity. This rule bridges the two planes on the shared source IP
+  and recovers the thief from the listKeys caller.
+  Why it's high-fidelity: it requires (a) a successful key/SAS listing, (b) AccountKey or
+  Anonymous bulk reads over a volume threshold, (c) from the SAME IP, (d) within 2h — so
+  routine OAuth access and normal admin key-listing alone do not fire.
+  Known false positives: legacy apps or backup jobs that legitimately use shared keys from
+  a stable IP; large one-off data migrations. Tune `minExfilMB` to your largest legitimate
+  AccountKey job and allow-list known automation IPs/principals via a watchlist.
+severity: High
+status: Available
+requiredDataConnectors:
+  - connectorId: AzureActivity
+    dataTypes:
+      - AzureActivity
+  # StorageBlobLogs arrives via the storage account's diagnostic settings (StorageRead category)
+  # — enable "Read" blob logs to Log Analytics; there is no gallery connector for it.
+queryFrequency: PT1H
+queryPeriod: PT3H                 # period > frequency: a listKeys can precede the read burst
+triggerOperator: gt
+triggerThreshold: 0
+tactics:
+  - CredentialAccess
+  - Collection
+  - Exfiltration
+relevantTechniques:
+  - T1552      # Unsecured Credentials (storage account keys) — honest parent; .005 (IMDS) would be wrong
+  - T1530      # Data from Cloud Storage
+  - T1567      # Exfiltration Over Web Service
+query: |
+  let lookback   = 3h;       // covers a listKeys that precedes the read burst
+  let corrWindow = 2h;       // max gap between key theft and the bulk read
+  let minExfilMB = 100.0;    // tune to your largest legitimate AccountKey job
+  let keyAccess =
+      AzureActivity
+      | where TimeGenerated > ago(lookback)
+      | where OperationNameValue in (
+          "Microsoft.Storage/storageAccounts/listKeys/action",
+          "Microsoft.Storage/storageAccounts/listAccountSas/action")
+      | where ActivityStatusValue == "Succeeded"           // listKeys emits Started+Succeeded; keep the success
+      | project KeyListTime = TimeGenerated, KeyTheftCaller = Caller,
+                KeyIp = CallerIpAddress, KeyResourceId = _ResourceId;
+  StorageBlobLogs
+  | where TimeGenerated > ago(lookback)
+  | where OperationName in ("GetBlob", "ListBlobs")
+  | where AuthenticationType in ("AccountKey", "Anonymous") // bypasses Entra identity -> RequesterUpn is empty
+  | where StatusCode == "200"                               // StatusCode is a STRING in this table
+  | extend SrcIp = tostring(split(CallerIpAddress, ":")[0]) // StorageBlobLogs CallerIpAddress carries :port
+  | summarize BlobReads = count(),
+              ExfilMB   = round(sum(ResponseBodySize) / 1048576.0, 1),
+              FirstRead = min(TimeGenerated), LastRead = max(TimeGenerated),
+              SampleBlobs = make_set(ObjectKey, 25)
+          by SrcIp, StorageAccount = AccountName
+  | where ExfilMB >= minExfilMB
+  | join kind=inner keyAccess on $left.SrcIp == $right.KeyIp
+  | where KeyListTime <= FirstRead and KeyListTime >= FirstRead - corrWindow   // key theft preceded the read
+  | project LastRead, SrcIp, KeyTheftCaller, StorageAccount, BlobReads, ExfilMB,
+            KeyListTime, FirstRead, KeyResourceId, SampleBlobs
+  | sort by ExfilMB desc
+entityMappings:
+  - entityType: Account
+    fieldMappings:
+      - identifier: FullName
+        columnName: KeyTheftCaller
+  - entityType: IP
+    fieldMappings:
+      - identifier: Address
+        columnName: SrcIp
+  - entityType: AzureResource
+    fieldMappings:
+      - identifier: ResourceId
+        columnName: KeyResourceId
+customDetails:
+  ExfiltratedMB: ExfilMB
+  BlobReadCount: BlobReads
+  StorageAccount: StorageAccount
+  KeyListedAt: KeyListTime
+alertDetailsOverride:
+  alertDisplayNameFormat: "Key theft + {{ExfilMB}} MB blob exfil from {{StorageAccount}} by {{KeyTheftCaller}} ({{SrcIp}})"
+eventGroupingSettings:
+  aggregationKind: AlertPerResult        # each (IP, storage account) is its own actionable alert
+incidentConfiguration:
+  createIncident: true
+  groupingConfiguration:
+    enabled: true
+    reopenClosedIncident: false
+    lookbackDuration: PT6H
+    matchingMethod: AllEntities          # fold key-theft + exfil alerts sharing the IP/account into one incident
+suppressionEnabled: false
+suppressionDuration: PT6H
+version: 1.0.0
+
+# ── Validation (azure-sentinel-hunter / Operation Quiet Ledger sample data) ──
+# Emulated against sentinel/tables/{AzureActivity,StorageBlobLogs}/*_sample.csv:
+#   1 alert  →  SrcIp 185.220.101.2 · StorageAccount stcontosofin · 840.7 MB · 11 reads
+#               KeyTheftCaller svc-backup@contoso.com (listKeys @ 09:58, reads @ 10:17–10:24)
+#   0 false positives  →  benign OAuth reads (52.170.12.45, 3.6 MB) excluded by AuthenticationType;
+#                         alexw's listKeys from 91.219.236.18 had no matching bulk read → not flagged.

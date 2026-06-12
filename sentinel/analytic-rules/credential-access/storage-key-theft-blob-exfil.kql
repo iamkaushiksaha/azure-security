@@ -1,0 +1,34 @@
+// Storage account key theft -> bulk blob exfiltration
+// Correlates CONTROL-plane key/SAS listing (AzureActivity) with DATA-plane bulk
+// reads authenticated by that key (StorageBlobLogs, AccountKey/Anonymous -> no
+// in-table identity) from the SAME source IP within a short window.
+// Schema-verified against sentinel/tables/{AzureActivity,StorageBlobLogs}.
+let lookback   = 3h;       // covers a listKeys that precedes the read burst
+let corrWindow = 2h;       // max gap between key theft and the bulk read
+let minExfilMB = 100.0;    // tune to your largest legitimate AccountKey job
+let keyAccess =
+    AzureActivity
+    | where TimeGenerated > ago(lookback)
+    | where OperationNameValue in (
+        "Microsoft.Storage/storageAccounts/listKeys/action",
+        "Microsoft.Storage/storageAccounts/listAccountSas/action")
+    | where ActivityStatusValue == "Succeeded"           // listKeys emits Started+Succeeded; keep the success
+    | project KeyListTime = TimeGenerated, KeyTheftCaller = Caller,
+              KeyIp = CallerIpAddress, KeyResourceId = _ResourceId;
+StorageBlobLogs
+| where TimeGenerated > ago(lookback)
+| where OperationName in ("GetBlob", "ListBlobs")
+| where AuthenticationType in ("AccountKey", "Anonymous") // bypasses Entra identity -> RequesterUpn is empty
+| where StatusCode == "200"                               // StatusCode is a STRING in this table
+| extend SrcIp = tostring(split(CallerIpAddress, ":")[0]) // StorageBlobLogs CallerIpAddress carries :port
+| summarize BlobReads = count(),
+            ExfilMB   = round(sum(ResponseBodySize) / 1048576.0, 1),
+            FirstRead = min(TimeGenerated), LastRead = max(TimeGenerated),
+            SampleBlobs = make_set(ObjectKey, 25)
+        by SrcIp, StorageAccount = AccountName
+| where ExfilMB >= minExfilMB
+| join kind=inner keyAccess on $left.SrcIp == $right.KeyIp
+| where KeyListTime <= FirstRead and KeyListTime >= FirstRead - corrWindow   // key theft preceded the read
+| project LastRead, SrcIp, KeyTheftCaller, StorageAccount, BlobReads, ExfilMB,
+          KeyListTime, FirstRead, KeyResourceId, SampleBlobs
+| sort by ExfilMB desc
