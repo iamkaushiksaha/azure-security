@@ -105,7 +105,7 @@ Full column list, validated against the Microsoft Learn reference. (Types are th
 - **The action is `DeviceAction`, not `Action`.** A surprising amount of copy-pasted KQL references a non-existent `Action` column. The verdict is `DeviceAction` (raw: `allow`/`deny`/`drop`/…); use `SimplifiedDeviceAction` only for cross-vendor normalization, and note it can be empty.
 - **Ports are `int`, but `RemotePort` is a `string`.** `SourcePort` and `DestinationPort` are integers (compare numerically); `RemotePort` is a string. Don't mix them in a single comparison without casting.
 - **IPs are `string`.** `SourceIP`/`DestinationIP` are string columns — use `parse_ipv4()`, `ipv4_is_in_range()`, `ipv4_is_private()` for CIDR/range logic; `==` works for exact matches.
-- **`SentBytes`/`ReceivedBytes` are `long` and direction-relative.** "Sent" is **outbound** — for egress/exfil sum `SentBytes`. Some appliances under-report or zero the byte counts on a `deny`; coalesce (`coalesce(SentBytes, 0L)`) before summing, and don't read a 0-byte denied connection as "no data."
+- **`SentBytes`/`ReceivedBytes` are `long` and direction-relative.** "Sent" is **outbound** — for egress/exfil sum `SentBytes`. Some appliances under-report or zero the byte counts on a `deny`; coalesce (`coalesce(SentBytes, long(0))`) before summing, and don't read a 0-byte denied connection as "no data."
 - **`LogSeverity` is a `string`.** It holds `Low`/`Medium`/`High`/`Very-High` (or a numeric string) — never compare it as an int directly; map or `toint()` deliberately.
 - **`Computer` is the forwarder, not the source host.** It is the Linux AMA collector. The actual endpoints are only their IPs in `SourceIP`/`DestinationIP`.
 - **No `CorrelationId`.** Unlike `StorageBlobLogs` / `AzureActivity`, CEF rows carry no correlation GUID — correlate by IP, user, URL, and time window instead. `ExternalID` is being deprecated in favour of `ExtID`.
@@ -123,7 +123,7 @@ The sample uses this curated subset of **real** columns: `TimeGenerated`, `Devic
 ```kusto
 CommonSecurityLog
 | where DeviceAction in ("allow", "block", "deny")   // count attempted volume, not just permitted
-| summarize TotalSent = sum(coalesce(SentBytes, 0L)),
+| summarize TotalSent = sum(coalesce(SentBytes, long(0))),
             Sessions = count(),
             Dests = dcount(DestinationIP),
             URLs = make_set(RequestURL, 10),
@@ -157,7 +157,7 @@ CommonSecurityLog
 | where RequestURL has "badupdate-cdn.com" or DestinationIP == "91.219.236.18"
 | summarize Allowed = countif(DeviceAction == "allow"),
             Denied = countif(DeviceAction in ("deny", "drop", "block")),
-            SentOut = sum(coalesce(SentBytes, 0L)),
+            SentOut = sum(coalesce(SentBytes, long(0))),
             FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
     by SourceIP, DestinationIP, tostring(split(RequestURL, "?")[0])
 | where Allowed > 0

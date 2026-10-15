@@ -84,7 +84,7 @@ Full column list, validated against the Microsoft Learn reference. (Types are th
 - **`CallerIpAddress` carries the port.** Values look like `185.220.101.2:54110`. Always normalize — `tostring(split(CallerIpAddress, ":")[0])` — before grouping or joining on IP, or every ephemeral port looks like a distinct "IP".
 - **Identity is auth-type dependent.** `RequesterObjectId` / `RequesterUpn` / `RequesterAppId` are only populated for `AuthenticationType == "OAuth"`. For `AccountKey`, `SAS`, and `Anonymous` they are **empty** — so a key-based exfil has no user attribution in this table; you must pivot to `AzureActivity` (the `listKeys` that handed out the key) to attribute it.
 - **`AccountName` is the storage account, not a person.** New analysts routinely mistake it for the caller. The container/blob path lives in `ObjectKey` / `Uri`.
-- **Size fields can be empty on failure.** `ResponseBodySize` / `RequestBodySize` "may be empty" for unsuccessful requests — coalesce (`coalesce(ResponseBodySize, 0L)`) before summing egress, or failed `403`s skew the totals.
+- **Size fields can be empty on failure.** `ResponseBodySize` / `RequestBodySize` "may be empty" for unsuccessful requests — coalesce (`coalesce(ResponseBodySize, long(0))`) before summing egress, or failed `403`s skew the totals.
 - **Category vs operation.** `Category` is only the coarse `StorageRead`/`StorageWrite`/`StorageDelete` bucket; the specific verb is `OperationName`. Filter on `OperationName` for precise hunts.
 
 ## 🧪 Sample data
@@ -100,7 +100,7 @@ The sample uses this curated subset of **real** columns: `TimeGenerated`, `Accou
 StorageBlobLogs
 | where OperationName == "GetBlob" and StatusCode in ("200", "206")
 | extend CallerIp = tostring(split(CallerIpAddress, ":")[0])
-| summarize TotalBytes = sum(coalesce(ResponseBodySize, 0L)),
+| summarize TotalBytes = sum(coalesce(ResponseBodySize, long(0))),
             Blobs = dcount(ObjectKey), Ops = count(),
             AuthTypes = make_set(AuthenticationType),
             FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
@@ -132,7 +132,7 @@ StorageBlobLogs
 | where CallerIp !in ("52.170.12.45", "20.98.111.30")   // known corp egress
 | summarize Ops = count(), Operations = make_set(OperationName),
             Containers = make_set(tostring(split(ObjectKey, "/")[2])),
-            Bytes = sum(coalesce(ResponseBodySize, 0L)),
+            Bytes = sum(coalesce(ResponseBodySize, long(0))),
             FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
     by CallerIp, AccountName, AuthenticationType
 | sort by Bytes desc
