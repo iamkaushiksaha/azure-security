@@ -67,7 +67,7 @@ Usage
 ```
 **Triage:** True positive = an *unexpected* surge whose peak hour lines up with the incident window — here `StorageBlobLogs` (~15x, peak 10:00) and `SecurityEvent` (~6x, peak 09:00); confirm by querying that `DataType` for `[StartTime, EndTime)`. Benign = a scheduled batch, planned onboarding of a new source, or a backfill/replay that explains the rise.
 
-### H2 · Source went silent — a table that was reporting suddenly drops to zero — [T1562.008](https://attack.mitre.org/techniques/T1562/008/)
+### H2 · Source went silent — a table that was reporting suddenly drops to zero — [T1685.002](https://attack.mitre.org/techniques/T1685/002/)
 **Hypothesis:** A table that was steadily ingesting and then reports `Quantity == 0` (or stops appearing) for an hour may mean a log source was disabled — agent stopped, diagnostic setting removed, or audit logging deliberately turned off to blind the SOC (impair defenses / disable cloud logs).
 ```kusto
 Usage

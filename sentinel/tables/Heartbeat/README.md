@@ -65,12 +65,12 @@ Full column list, validated against the Microsoft Learn reference. Types are KQL
 - **Agents heartbeat ~once/minute, so volume is high and uniform.** Always aggregate (`summarize ... by Computer`, `make-series`) before reasoning about a host; a single row is rarely interesting on its own.
 
 ## 🧪 Sample data
-[`Heartbeat_sample.csv`](Heartbeat_sample.csv) — 47 rows. The rows tell the **availability side** of *Operation Quiet Ledger*: five Azure hosts beacon every ~15 minutes across the 2026-06-10 morning — `DC01`, `FIN-WS-07`, `HR-WS-03`, and `APP-SQL-02` keep reporting healthily through ~10:30 (the always-on baseline), while the Ubuntu host **`WEB-APP-01` stops sending heartbeats right after `2026-06-10T09:25:01Z`** — immediately following the Linux foothold, where the actor escalates via `sudo`, **tampers with `auditd` and stops the agent/log pipeline**. The silent host with a growing heartbeat gap is the tell. This is the **agent-silence / defense-evasion facet (T1562.001)** of the cross-table scenario and pairs directly with the `LinuxAuditLog` `auditd`-tamper step (~09:20) on the same `Computer`.
+[`Heartbeat_sample.csv`](Heartbeat_sample.csv) — 47 rows. The rows tell the **availability side** of *Operation Quiet Ledger*: five Azure hosts beacon every ~15 minutes across the 2026-06-10 morning — `DC01`, `FIN-WS-07`, `HR-WS-03`, and `APP-SQL-02` keep reporting healthily through ~10:30 (the always-on baseline), while the Ubuntu host **`WEB-APP-01` stops sending heartbeats right after `2026-06-10T09:25:01Z`** — immediately following the Linux foothold, where the actor escalates via `sudo`, **tampers with `auditd` and stops the agent/log pipeline**. The silent host with a growing heartbeat gap is the tell. This is the **agent-silence / defense-evasion facet (T1685)** of the cross-table scenario and pairs directly with the `LinuxAuditLog` `auditd`-tamper step (~09:20) on the same `Computer`.
 The sample uses this curated subset of **real** columns: `TimeGenerated`, `Computer`, `ComputerIP`, `ComputerEnvironment`, `OSType`, `OSName`, `OSMajorVersion`, `Category`, `SCAgentChannel`, `Version`, `RemoteIPCountry`, `RemoteIPLatitude`, `RemoteIPLongitude`, `ResourceId`, `ResourceGroup`, `SubscriptionId`, `VMUUID`, `SourceComputerId`.
 
 ## 🎯 Threat-hunting hypotheses (single-table)
 
-### H1 · Machine stopped reporting — agent killed / log tampering — [T1562.001](https://attack.mitre.org/techniques/T1562/001/)
+### H1 · Machine stopped reporting — agent killed / log tampering — [T1685](https://attack.mitre.org/techniques/T1685/)
 **Hypothesis:** A host that was heartbeating regularly and then goes silent — while its peers keep reporting — has either failed or had its monitoring agent disabled by an adversary. The classic "last seen" hunt surfaces it.
 ```kusto
 Heartbeat
@@ -81,7 +81,7 @@ Heartbeat
 ```
 **Triage:** True positive = `WEB-APP-01` last seen `09:25:01` while every other host reported past `10:30` — correlate with `LinuxAuditLog` `auditd`/`SERVICE_STOP` tamper on the same `Computer`. Benign = a scheduled patch reboot or decommission in a known change window (confirm with `Update`/change records). Swap the literal `datetime(...)` for `now()` in production.
 
-### H2 · Heartbeat gap detection with make-series — [T1562.001](https://attack.mitre.org/techniques/T1562/001/)
+### H2 · Heartbeat gap detection with make-series — [T1685](https://attack.mitre.org/techniques/T1685/)
 **Hypothesis:** Bucketing heartbeats over time per host exposes the exact interval where a previously-steady agent flat-lines — sharper than a single "last seen" value and resistant to one-off blips.
 ```kusto
 Heartbeat
@@ -93,7 +93,7 @@ Heartbeat
 ```
 **Triage:** True positive = a host whose `Beats` series is non-zero early then becomes a trailing run of `0` (here `WEB-APP-01`). Benign = a host that is `0` throughout (never onboarded) or has isolated single-bucket dips from transient network loss.
 
-### H3 · Agent-version drift / outdated agents — [T1562.001](https://attack.mitre.org/techniques/T1562/001/)
+### H3 · Agent-version drift / outdated agents — [T1685](https://attack.mitre.org/techniques/T1685/)
 **Hypothesis:** Hosts running an old `Version` of the monitoring agent are a coverage and tamper-resilience risk; an unexpected downgrade can also indicate interference with the agent.
 ```kusto
 Heartbeat

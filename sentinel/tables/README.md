@@ -56,7 +56,7 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
 | [Syslog](Syslog/README.md) | Linux syslog (free-text) | SSH brute force → accepted → sudo to root | T1110 · T1548.003 |
-| [LinuxAuditLog](LinuxAuditLog/README.md) | Linux auditd records | /etc/shadow read, payload run, auditd tamper | T1003.008 · T1562.001 |
+| [LinuxAuditLog](LinuxAuditLog/README.md) | Linux auditd records | /etc/shadow read, payload run, auditd tamper | T1003.008 · T1685.004 |
 | [ASimAgentEventLogs](ASimAgentEventLogs/README.md) | **ASIM AI/LLM agent** telemetry (model/tool/tokens) | AI agent driven to call storage/KeyVault tools | T1059 · T1565.001 |
 
 ### 🌐 Network, DNS & perimeter
@@ -77,7 +77,7 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
 | [AKSAudit](AKSAudit/README.md) | Full Kubernetes API audit | Secret enumeration + `pods/exec` recon | T1609 · T1552.007 |
-| [AKSAuditAdmin](AKSAuditAdmin/README.md) | API audit, **admin subset** (no get/list/watch) | clusterrolebinding→cluster-admin, logging deleted | T1098 · T1562.001 |
+| [AKSAuditAdmin](AKSAuditAdmin/README.md) | API audit, **admin subset** (no get/list/watch) | clusterrolebinding→cluster-admin, logging deleted | T1098 · T1685 |
 
 ### 📊 Sentinel alerts, incidents & operations
 | Table | What it captures | Sample story | Key MITRE |
@@ -85,8 +85,8 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 | [SecurityAlert](SecurityAlert/README.md) | Sentinel/Defender security alerts | The 12 alerts the attack tripped (entities in JSON) | *(detection layer)* |
 | [SecurityIncident](SecurityIncident/README.md) | Sentinel incidents (alert grouping, change log) | Incident #4471 New→Active→Closed(TruePositive) | *(case layer)* |
 | [Alert](Alert/README.md) | Azure Monitor alerts (legacy log-search/SCOM) | Infra alerts fire across the incident window | *(triage corroboration)* |
-| [Usage](Usage/README.md) | Per-table ingestion metering | Ingestion spike; Syslog drops to 0 (source killed) | T1562.008 |
-| [Heartbeat](Heartbeat/README.md) | Agent health beacon | WEB-APP-01 goes silent mid-attack | T1562.001 |
+| [Usage](Usage/README.md) | Per-table ingestion metering | Ingestion spike; Syslog drops to 0 (source killed) | T1685.002 |
+| [Heartbeat](Heartbeat/README.md) | Agent health beacon | WEB-APP-01 goes silent mid-attack | T1685 |
 
 ## 🎯 The correlated scenario — "Operation Quiet Ledger"
 

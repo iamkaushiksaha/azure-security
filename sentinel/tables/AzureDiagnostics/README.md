@@ -189,7 +189,7 @@ AzureDiagnostics
 ```
 **Triage:** True positive = `kv-contoso-prod` accessed from `185.220.101.2` (NL) by `alexw`/`svc-backup`. Benign = a new but legitimate Azure region/egress IP — confirm against the app's expected source ranges.
 
-### H3 · Permissive NSG rule added / counted (network exposure) — [T1562.007](https://attack.mitre.org/techniques/T1562/007/)
+### H3 · Permissive NSG rule added / counted (network exposure) — [T1686.001](https://attack.mitre.org/techniques/T1686/001/)
 **Hypothesis:** An inbound NSG rule allows traffic from a wide/untrusted source to a sensitive management port (e.g. RDP 3389, SSH 22) — defense weakening to keep access.
 ```kusto
 AzureDiagnostics

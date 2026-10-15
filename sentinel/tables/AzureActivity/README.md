@@ -101,7 +101,7 @@ AzureActivity
 ```
 **Triage:** True positive = `listKeys` on `stcontosofin` from the attacker IP minutes after a role write, by a caller that doesn't normally touch storage. Benign = a known backup/automation SPN listing keys on a schedule from a stable IP.
 
-### H3 · Network security-rule tampering (egress opened) — [T1562.007](https://attack.mitre.org/techniques/T1562/007/)
+### H3 · Network security-rule tampering (egress opened) — [T1686.001](https://attack.mitre.org/techniques/T1686/001/)
 **Hypothesis:** A caller writes or deletes an NSG security rule (or Azure Firewall rule), potentially opening egress for exfil/C2 or disabling a control.
 ```kusto
 AzureActivity

@@ -100,7 +100,7 @@ AKSAuditAdmin
 ```
 **Triage:** True positive = a low-privilege identity (`alexw`, `cluster-readers`) patching `cluster-admin-binding` or creating `ops-support-crb` from the attacker IP. Benign = the platform team (`itadmin`/`dvora`) provisioning a namespace rolebinding via change management. *(`itadmin`'s later `delete` of `ops-support-crb` is remediation, not attack.)*
 
-### H3 · Deletion of logging / monitoring / policy objects — defense evasion — [T1562.001](https://attack.mitre.org/techniques/T1562/001/)
+### H3 · Deletion of logging / monitoring / policy objects — defense impairment — [T1685](https://attack.mitre.org/techniques/T1685/)
 **Hypothesis:** Deleting the Azure Monitor agent DaemonSet, its settings ConfigMap, or admission/policy objects blinds detection before the next stage.
 ```kusto
 AKSAuditAdmin

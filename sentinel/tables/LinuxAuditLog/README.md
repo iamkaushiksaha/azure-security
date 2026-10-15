@@ -149,7 +149,7 @@ LinuxAuditLog
 ```
 **Triage:** True positive = same `ses` shows `wget` → `chmod` → `/tmp/payload` within minutes (keys `download-exec`/`exec-prep`/`malware-exec`). Benign = an admin fetching a signed package into a build dir, not `/tmp`, and not chmod-ing it executable.
 
-### H4 · Audit-configuration tampering / privileged log destruction — [T1562.001](https://attack.mitre.org/techniques/T1562/001/)
+### H4 · Audit-configuration tampering / privileged log destruction — [T1685.004](https://attack.mitre.org/techniques/T1685/004/)
 **Hypothesis:** `CONFIG_CHANGE` (audit rule removal), stopping the `auditd` service, or deleting files under `/var/log` with `euid=0` is defense evasion to blind the SOC.
 ```kusto
 LinuxAuditLog
