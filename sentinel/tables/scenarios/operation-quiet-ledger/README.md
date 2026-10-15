@@ -25,7 +25,7 @@ flowchart TD
     PE --> EX["📤 Blob exfiltration<br/>StorageBlobLogs · 10:20<br/>T1530 · T1567"]
     PE --> K8["☸️ AKS exec + secrets<br/>AKSAudit · AKSAuditAdmin · 11:00<br/>T1609 · T1552.007"]
     S -.parallel.-> LIN["🐧 Linux foothold WEB-APP-01<br/>Syslog · LinuxAuditLog · 08:50<br/>T1110 · T1548.003 · T1003.008"]
-    LIN --> EVA["🕳️ Kill agent / tamper logs<br/>Heartbeat · Usage · 09:25<br/>T1562.001 · T1562.008"]
+    LIN --> EVA["🕳️ Kill agent / tamper logs<br/>Heartbeat · Usage · 09:25<br/>T1685 · T1685.002"]
 
     style P fill:#0078D4,color:#fff
     style S fill:#1f6feb,color:#fff
@@ -65,7 +65,7 @@ flowchart TD
 | 08:50–09:25 | (parallel) Linux foothold | [T1110](https://attack.mitre.org/techniques/T1110/) · [T1548.003](https://attack.mitre.org/techniques/T1548/003/) · [T1003.008](https://attack.mitre.org/techniques/T1003/008/) | `Syslog` · `LinuxAuditLog` | SSH brute force on `WEB-APP-01` → sudo → `/etc/shadow` read → auditd tamper |
 | 09:00 | Lateral / Persistence | [T1110.003](https://attack.mitre.org/techniques/T1110/003/) · [T1136.001](https://attack.mitre.org/techniques/T1136/001/) | `SecurityEvent` | Spray→logon on `DC01`; 4672 special privileges; **4720 account created** |
 | 09:15 | Command & Control | [T1071.004](https://attack.mitre.org/techniques/T1071/004/) · [T1071.001](https://attack.mitre.org/techniques/T1071/001/) · [T1568.002](https://attack.mitre.org/techniques/T1568/002/) | `DnsEvents` · `DeviceNetworkEvents` | DNS beaconing + **DGA subdomains** to `badupdate-cdn.com`; `powershell.exe` connections to the C2 IP |
-| 09:25 | Defense Evasion | [T1562.001](https://attack.mitre.org/techniques/T1562/001/) · [T1562.008](https://attack.mitre.org/techniques/T1562/008/) | `Heartbeat` · `Usage` | `WEB-APP-01` agent **goes silent**; `Syslog` ingestion **drops to 0** |
+| 09:25 | Defense Impairment | [T1685](https://attack.mitre.org/techniques/T1685/) · [T1685.002](https://attack.mitre.org/techniques/T1685/002/) | `Heartbeat` · `Usage` | `WEB-APP-01` agent **goes silent**; `Syslog` ingestion **drops to 0** |
 | 09:30 | Persistence | [T1543.003](https://attack.mitre.org/techniques/T1543/003/) | `Event` | Malicious **7045 service install** on `DC01` |
 | 09:40 | Privilege Escalation (Entra) | [T1098.003](https://attack.mitre.org/techniques/T1098/003/) · [T1528](https://attack.mitre.org/techniques/T1528/) | `AuditLogs` | alexw self-added to a **privileged directory role**; rogue **app consent** + client secret |
 | 10:00 | Privilege Escalation (Azure) | [T1098.003](https://attack.mitre.org/techniques/T1098/003/) · [T1552.005](https://attack.mitre.org/techniques/T1552/005/) | `AzureActivity` | **roleAssignments/write** (Owner), **listKeys** on `stcontosofin`, NSG opened |
@@ -75,7 +75,7 @@ flowchart TD
 | 11:00 | Container Exec / Cred Access | [T1609](https://attack.mitre.org/techniques/T1609/) · [T1552.007](https://attack.mitre.org/techniques/T1552/007/) · [T1098](https://attack.mitre.org/techniques/T1098/) | `AKSAudit` · `AKSAuditAdmin` | `pods/exec`, secret reads, **clusterrolebinding → cluster-admin**, logging deleted |
 | 08:20–11:00 | *(Detection & Response)* | — | `SecurityAlert` · `SecurityIncident` · `Alert` | The attack trips **12 product alerts**, grouped into **incident #4471** (New→Active→Closed *TruePositive*) |
 
-🔖 Load the full coverage map into [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/): **[`mitre-navigator-layer.json`](mitre-navigator-layer.json)** (45 techniques). The detection layer (`SecurityAlert`/`SecurityIncident`) is the **defender's** view of the same timeline — start triage there and pivot down into the raw tables.
+🔖 Load the full coverage map into [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/): **[`mitre-navigator-layer.json`](mitre-navigator-layer.json)** (46 techniques). The detection layer (`SecurityAlert`/`SecurityIncident`) is the **defender's** view of the same timeline — start triage there and pivot down into the raw tables.
 
 ---
 

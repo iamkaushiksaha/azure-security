@@ -1,7 +1,7 @@
 {
   "name": "Operation Quiet Ledger \u2014 Sentinel Table Library",
   "versions": {
-    "attack": "14",
+    "attack": "19",
     "navigator": "4.9.1",
     "layer": "4.5"
   },
@@ -289,21 +289,28 @@
       "enabled": true
     },
     {
-      "techniqueID": "T1562.001",
+      "techniqueID": "T1685",
       "score": 100,
       "color": "#fd8d3c",
-      "comment": "Heartbeat/LinuxAuditLog/AKSAuditAdmin \u2014 disable/kill security tooling",
+      "comment": "Heartbeat/AKSAuditAdmin \u2014 disable/kill security tooling",
       "enabled": true
     },
     {
-      "techniqueID": "T1562.007",
+      "techniqueID": "T1685.004",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "LinuxAuditLog \u2014 auditd tampered with (Linux audit log disabled)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1686.001",
       "score": 100,
       "color": "#fd8d3c",
       "comment": "AzureActivity \u2014 disable cloud firewall (NSG opened)",
       "enabled": true
     },
     {
-      "techniqueID": "T1562.008",
+      "techniqueID": "T1685.002",
       "score": 100,
       "color": "#fd8d3c",
       "comment": "Usage \u2014 telemetry source silenced (Syslog \u2192 0)",

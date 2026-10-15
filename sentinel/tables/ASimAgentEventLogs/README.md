@@ -156,7 +156,7 @@ ASimAgentEventLogs
 - **SigninLogs** on `ActorUsername` → `UserPrincipalName` (and `SrcIpAddr` → `IPAddress`) — tie the agent abuse back to `alexw`'s 08:20 risky sign-in from NL and confirm the same attacker IP drove both.
 - **DeviceLogonEvents / DeviceProcessEvents** on `SrcFQDN` → `DeviceName` — confirm the agent ran on **FIN-WS-07** during the same window the host was compromised, and see the local process that launched it.
 - **StorageBlobLogs / AzureActivity** on `ActorUsername` and resource (`stcontosofin`, `kv-contoso-prod`) — corroborate that the storage-enumeration and secret-read **tool calls** turned into real control-plane / data-plane operations (10:00 key list → 10:20 blob exfil → 10:40 Key Vault).
-- **Heartbeat** on `SrcFQDN` → `Computer` — *governance contrast:* if a **collection** agent on FIN-WS-07 went silent during the incident window while the **AI** agent stayed busy, that gap is a defense-evasion / log-tampering tell ([T1562.001](https://attack.mitre.org/techniques/T1562/001/)); use `Heartbeat`, not this table, to detect the silenced sensor.
+- **Heartbeat** on `SrcFQDN` → `Computer` — *governance contrast:* if a **collection** agent on FIN-WS-07 went silent during the incident window while the **AI** agent stayed busy, that gap is a defense-impairment / log-tampering tell ([T1685](https://attack.mitre.org/techniques/T1685/)); use `Heartbeat`, not this table, to detect the silenced sensor.
 
 ## 📚 References
 - [ASimAgentEventLogs — Azure Monitor reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/asimagenteventlogs)
