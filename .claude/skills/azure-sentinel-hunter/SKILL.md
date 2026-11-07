@@ -109,6 +109,6 @@ A piece of work from this skill ships only when:
 - [ ] for detections: entity mapping + a written false-positive/tuning note;
 - [ ] sources cited (MS Learn / the table library), thresholds called out as tunable.
 
-> This skill pairs with the **[KQL Mastery Path](../../../sentinel/kql/README.md)** (learn the
+> This skill pairs with the **[KQL reference course](../../../sentinel/kql/README.md)** (learn the
 > language) and the **[Sentinel Table Library](../../../sentinel/tables/README.md)** (the schemas
 > and test data it runs against).

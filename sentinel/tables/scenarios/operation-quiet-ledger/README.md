@@ -260,4 +260,4 @@ This dataset is purpose-built to **validate a detection before you ship it**:
 - Per-table schemas & single-table hunts: [`sentinel/tables/`](../../README.md)
 - [Hunt for threats with Microsoft Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/hunting) · [Advanced hunting in Defender XDR](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-overview)
 - [MITRE ATT&CK](https://attack.mitre.org/) · [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/)
-- Companion language course: [KQL Mastery Path](../../../kql/README.md)
+- Companion language course: [KQL reference course](../../../kql/README.md)

@@ -120,9 +120,9 @@ It's built for four jobs:
 **Want to run the queries?** Ingest the sample CSVs one of two ways:
 
 - **Azure Data Explorer free cluster** (no Azure subscription) — [https://aka.ms/kustofree](https://aka.ms/kustofree), then *Get data → Local file* per table, or use the generator in the [Sentinel Hunter skill](../../.claude/skills/azure-sentinel-hunter/) to emit `.create table` + ingest commands.
-- **Log Analytics / Sentinel** — paste a CSV into a `datatable()` and save it as a function named after the table (the [KQL Mastery Path Stage 00](../kql/00-setup/README.md) shows the exact pattern, including a zero-permission `let` variant).
+- **Log Analytics / Sentinel** — paste a CSV into a `datatable()` and save it as a function named after the table (the [KQL reference course, Stage 00](../kql/00-setup/README.md) shows the exact pattern, including a zero-permission `let` variant).
 
-> The companion **[KQL Mastery Path](../kql/README.md)** teaches the language from scratch; this library is the **data + schema reference** those skills run against.
+> The companion **[KQL reference course](../kql/README.md)** teaches the language from scratch; this library is the **data + schema reference** those skills run against.
 
 ## 🧱 Principles
 
@@ -135,6 +135,6 @@ It's built for four jobs:
 
 <div align="center">
 
-*Part of the [azure-security](../../README.md) repository · pairs with the [KQL Mastery Path](../kql/README.md) and the [Azure Sentinel Hunter skill](../../.claude/skills/azure-sentinel-hunter/).*
+*Part of the [azure-security](../../README.md) repository · pairs with the [KQL reference course](../kql/README.md) and the [Azure Sentinel Hunter skill](../../.claude/skills/azure-sentinel-hunter/).*
 
 </div>
