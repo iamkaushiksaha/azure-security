@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🗂️ Microsoft Sentinel Table Library
+# Microsoft Sentinel Table Library
 
 **Schema-accurate reference + ready-to-ingest sample logs for 27 Log Analytics / Defender XDR tables — woven into one correlated attack scenario you can hunt, triage, and test detections against.**
 
@@ -25,7 +25,7 @@ Real Sentinel environments rarely have every table populated, so analysts can't 
 Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalone files also act as **one correlated dataset** — see the [Operation Quiet Ledger scenario](scenarios/operation-quiet-ledger/README.md) for the cross-table joins.
 
 > [!NOTE]
-> **Schema-accurate, not schema-exhaustive.** Each table doc lists every column from Microsoft Learn, but each sample CSV ships a *curated subset* of the most detection-relevant real columns (10–22 of them) so the data stays readable and runnable. Column names and types are always exact.
+> **Schema-accurate, not schema-exhaustive.** Each table doc lists every column from Microsoft Learn, but each sample CSV ships a *curated subset* of the most detection-relevant real columns (11–24 of them) so the data stays readable and runnable. Column names and types are always exact.
 
 ## 📁 The tables
 
@@ -40,7 +40,7 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 ### 💻 Endpoint (Microsoft Defender for Endpoint)
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
-| [DeviceLogonEvents](DeviceLogonEvents/README.md) | Device authentications | RDP onto FIN-WS-07, then a DC01 failure burst | T1021.001 · T1110 |
+| [DeviceLogonEvents](DeviceLogonEvents/README.md) | Device authentications | RDP onto FIN-WS-07, then a DC01 failure burst | T1133 · T1110 |
 | [DeviceProcessEvents](DeviceProcessEvents/README.md) | Process creation (the process tree) | winword → encoded PowerShell → LOLBins → dumper | T1059.001 · T1566 |
 | [DeviceNetworkEvents](DeviceNetworkEvents/README.md) | Network connections by process | PowerShell beaconing to C2 + exfil push | T1071.001 · T1041 |
 | [DeviceEvents](DeviceEvents/README.md) | ASR / AMSI / misc device security events | ASR audit→block, AMSI catch, LOLBins | T1059 · T1218 |
@@ -62,14 +62,14 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 ### 🌐 Network, DNS & perimeter
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
-| [DnsEvents](DnsEvents/README.md) | Windows DNS query/analytic events | C2 beacon + DGA subdomains + NXDOMAIN spikes | T1568.002 · T1071.004 |
-| [DnsAuditEvents](DnsAuditEvents/README.md) | Windows DNS **audit** (zone/record changes) | Rogue records + malicious forwarder planted | T1565 · T1556 |
+| [DnsEvents](DnsEvents/README.md) | Windows DNS query/analytic events (legacy agent) | C2 beacon + DGA subdomains + NXDOMAIN spikes | T1568.002 · T1071.004 |
+| [DnsAuditEvents](DnsAuditEvents/README.md) | Windows DNS **audit** (zone/record changes) | Rogue records + malicious forwarder planted | T1565 · T1557 |
 | [CommonSecurityLog](CommonSecurityLog/README.md) | Firewall / proxy CEF appliance logs | Inbound RDP allowed + >1 GB exfil egress burst | T1567 · T1071 |
 
 ### ☁️ Azure control plane & resources
 | Table | What it captures | Sample story | Key MITRE |
 |---|---|---|---|
-| [AzureActivity](AzureActivity/README.md) | ARM subscription activity log | roleAssignments/write + listKeys + NSG open | T1098.003 · T1552.005 |
+| [AzureActivity](AzureActivity/README.md) | ARM subscription activity log | roleAssignments/write + listKeys + NSG open | T1098.003 · T1552 |
 | [AzureDiagnostics](AzureDiagnostics/README.md) | Multi-resource diagnostics (Key Vault, NSG…) | Key Vault secret/key harvest after a role grant | T1555.006 · T1078.004 |
 | [StorageBlobLogs](StorageBlobLogs/README.md) | Storage blob data-plane | AccountKey + Anonymous exfil of finance blobs | T1567 · T1530 |
 
@@ -90,7 +90,7 @@ Every sample uses the **same cast of users, IPs, and hosts**, so the 27 standalo
 
 ## 🎯 The correlated scenario — "Operation Quiet Ledger"
 
-The sample data isn't 21 disconnected demos — it's **one intrusion** seen from two dozen angles, all on **2026-06-10**: an emailed phish compromises a finance analyst (`alexw`), who is driven from a Tor IP onto `FIN-WS-07`, laterally to `DC01`, then pivots into Azure to escalate privilege, harvest secrets, and exfiltrate finance data from blob storage and AKS — with a parallel Linux foothold on `WEB-APP-01`.
+The sample data isn't 27 disconnected demos — it's **one intrusion** seen from two dozen angles, all on **2026-06-10**: an emailed phish compromises a finance analyst (`alexw`), who is driven from a Tor IP onto `FIN-WS-07`, laterally to `DC01`, then pivots into Azure to escalate privilege, harvest secrets, and exfiltrate finance data from blob storage and AKS — with a parallel Linux foothold on `WEB-APP-01`.
 
 ➡️ **[Read the full scenario, kill-chain, and cross-table join queries →](scenarios/operation-quiet-ledger/README.md)**
 
@@ -106,7 +106,7 @@ It's built for four jobs:
 |---|---|---|
 | User | `alexw@contoso.com` | Compromised finance analyst (the through-line) |
 | User | `priya.menon@contoso.com` | Phished first (delivery) |
-| User | `svc-backup@contoso.com` | Service principal abused for Azure persistence |
+| User | `svc-backup@contoso.com` | Service account abused for Azure persistence |
 | Users (benign) | `meganb@`, `jamest@`, `dvora@`, `itadmin@` | Noise / legitimate admins |
 | Attacker IP | `185.220.101.2` (NL) · `91.219.236.18` | Primary / secondary |
 | Domains | `login-contoso-sso.com` · `badupdate-cdn.com` | Phish / C2 |

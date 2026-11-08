@@ -1,7 +1,7 @@
 # SecurityEvent
 
 > **Category:** Security
-> **Connector / source:** Windows Security event log forwarded by the **Azure Monitor Agent (AMA)** via the *Windows Security Events via AMA* connector, or the legacy **Log Analytics / MMA agent** (*Security Events* connector). Also populated by Microsoft Defender for Cloud on monitored VMs.
+> **Connector / source:** Windows Security event log forwarded by the **Azure Monitor Agent (AMA)** via the *Windows Security Events via AMA* connector, or the legacy **Log Analytics / MMA agent** (*Security Events* connector,(retired 31 Aug 2024)). Also populated by Microsoft Defender for Cloud on monitored VMs.
 > **Table plan:** Analytics (default). Supports Basic logs / lake-only ingestion and ingestion-time DCR transforms.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/securityevent
 

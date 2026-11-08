@@ -1,7 +1,7 @@
 # Alert
 
 > **Category:** Azure Monitor (Solution: `LogManagement`)
-> **Connector / source:** Azure Monitor alert rules — **metric**, **log search (scheduled query)**, and **Activity Log** alert rules — plus System Center Operations Manager (SCOM) alerts forwarded by the Log Analytics agent / SCOM connector. **Legacy table:** only *older versions of log search alerts* (and SCOM) actually write rows here. Modern Azure Monitor alerts are **not** stored in this table — Microsoft directs you to **Azure Resource Graph** (`alertsmanagementresources`) to query current alerts of any type.
+> **Connector / source:** Azure Monitor alert rules — **metric**, **log search (scheduled query)**, and **Activity Log** alert rules — plus System Center Operations Manager (SCOM) alerts forwarded by the SCOM connector (or the legacy Log Analytics agent,(retired 31 Aug 2024)). **Legacy table:** only *older versions of log search alerts* (and SCOM) actually write rows here. Modern Azure Monitor alerts are **not** stored in this table — Microsoft directs you to **Azure Resource Graph** (`alertsmanagementresources`) to query current alerts of any type.
 > **Table plan:** Analytics (default). The reference flags **Basic log: No**, **Ingestion-time DCR support: Yes**, **Lake-only ingestion: No**.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/alert
 
@@ -101,6 +101,8 @@ Full column list, validated against the Microsoft Learn reference. Types are the
 
 ## 🧪 Sample data
 [`Alert_sample.csv`](Alert_sample.csv) — 19 rows. Tells the **Operation Quiet Ledger** story from the **infrastructure-alert** angle: as the compromise progresses on 2026-06-10, Azure Monitor alert rules fire on the affected resources — an **Activity-Log alert on `roleAssignments/write`** against `rg-finance-prod` (~09:42), a **Key Vault access-policy-change** Activity-Log alert and **Key Vault access-spike** metric alert on `kv-contoso-prod` (~09:55 / 10:15), a **storage-key-list** Activity-Log alert plus **egress / blob-transaction spike** metric alerts on `stcontosofin` (~10:02–10:09, the exfil), an **NSG security-rule-change** alert (~10:18), a **log-search alert on anomalous outbound data from `FIN-WS-07`** (~10:21), and a **failed-sign-in-burst** log alert for `alexw@contoso.com`. The Linux foothold surfaces as **SSH-auth-failure** and **sudo-to-root** alerts on `WEB-APP-01` (~08:52 / 09:24, `SourceSystem == "Linux"`). These sit amid **benign noise**: a CPU alert on FIN-WS-07, a storage-availability blip, a disk-space alert on HR-WS-03, a DC01 heartbeat miss, a cert-expiry reminder, an autoscale event, and a backup-completed notice — the normal daily churn an analyst must filter out. This corresponds to the **~09:40–11:00 privilege-escalation → Azure-pivot → exfil** window of the scenario.
+
+> In a real workspace, modern metric and Activity-Log alerts like these would **not** land in `Alert` (see the source note above): you'd query them in Azure Resource Graph (`alertsmanagementresources`). The sample replays them in this legacy schema so the scenario has an infrastructure-alert layer to practise on.
 
 The sample uses this curated subset of **real** columns: `TimeGenerated`, `TimeRaised`, `AlertName`, `AlertDescription`, `AlertSeverity`, `AlertPriority`, `AlertState`, `SourceSystem`, `SourceDisplayName`, `ResourceId`, `Query`, `ThresholdOperator`, `ThresholdValue`, `AlertValue`, `RepeatCount`.
 

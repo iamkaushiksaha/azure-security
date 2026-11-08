@@ -1,7 +1,7 @@
 # Event
 
 > **Category:** Security, Virtual Machines (Azure Monitor; solution **LogManagement**)
-> **Connector / source:** Windows **System & Application (and other non-Security) event logs** collected from monitored Windows hosts by the **Log Analytics / MMA agent** or the **Azure Monitor Agent (AMA)** via a *Windows Event Logs* data-collection rule. (The Windows **Security** log is routed to `SecurityEvent`, **not** here.)
+> **Connector / source:** Windows **System & Application (and other non-Security) event logs** collected from monitored Windows hosts by the **Azure Monitor Agent (AMA)** via a *Windows Event Logs* data-collection rule, or the legacy **Log Analytics / MMA agent** (retired 31 Aug 2024). (The Windows **Security** log is routed to `SecurityEvent`, **not** here.)
 > **Table plan:** Analytics (default). Ingestion-time DCR transforms supported; Basic logs = No, lake-only = No.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/event
 

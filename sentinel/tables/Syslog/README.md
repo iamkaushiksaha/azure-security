@@ -1,7 +1,7 @@
 # Syslog
 
 > **Category:** Security / Virtual Machines (Linux host telemetry)
-> **Connector / source:** Azure Monitor Agent (AMA) **Syslog** data connector, or the legacy Log Analytics agent (OMS), forwarding the host's RFC 3164/5424 syslog stream from Linux VMs, Arc-enabled servers, and AKS/Arc clusters into the workspace.
+> **Connector / source:** Azure Monitor Agent (AMA) **Syslog** data connector, or the legacy Log Analytics agent (OMS,(retired 31 Aug 2024)), forwarding the host's RFC 3164/5424 syslog stream from Linux VMs, Arc-enabled servers, and AKS/Arc clusters into the workspace.
 > **Table plan:** Analytics (default). The reference flags **Basic log: No**; it does support ingestion-time DCR transforms and lake-only ingestion.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/syslog
 
