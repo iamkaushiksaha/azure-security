@@ -29,13 +29,18 @@ SigninLogs
 ```
 **Triage:** is the IP known infrastructure (VPN/gateway)? Did any of those users *succeed* shortly after? Pivot A3.
 
+> **Tip (A1–A3):** spraying and brute force against non-interactive flows (legacy auth, token endpoints) land in `AADNonInteractiveUserSignInLogs`, not `SigninLogs`. In production, start these hunts with `union SigninLogs, AADNonInteractiveUserSignInLogs` (both use string `ResultType` and the columns used here). The table library has no sample for that table, so A1–A3 stay on `SigninLogs` and run against the samples as-is.
+
 ### A2 · Brute force on a single account — [T1110.001](https://attack.mitre.org/techniques/T1110/001/)
 **Hypothesis:** a single account sees a burst of failed sign-ins.
 
 ```kusto
 SigninLogs
 | where TimeGenerated > ago(1d)
-| where ResultType != "0"
+// Credential failures only. `ResultType != "0"` would also count interrupts that are
+// normal sign-in flow: MFA required (50074, 50076), "keep me signed in" (50140), etc.
+// 50126 invalid username or password · 50053 locked (Smart Lockout) · 50055 password expired · 50057 account disabled
+| where ResultType in ("50126", "50053", "50055", "50057")
 | summarize Failures = count(),
             SourceIPs = dcount(IPAddress),
             FirstSeen = min(TimeGenerated),
@@ -52,7 +57,8 @@ SigninLogs
 let lookback = 1d;
 let failures =
     SigninLogs
-    | where TimeGenerated > ago(lookback) and ResultType != "0"
+    | where TimeGenerated > ago(lookback)
+    | where ResultType in ("50126", "50053", "50055", "50057")   // credential failures, not MFA/KMSI interrupts (see A2)
     | summarize Failures = count(), LastFailure = max(TimeGenerated) by UserPrincipalName
     | where Failures >= 10;
 SigninLogs
@@ -63,7 +69,7 @@ SigninLogs
 | sort by SuccessTime desc
 ```
 
-### A4 · Atypical / impossible travel — [T1078](https://attack.mitre.org/techniques/T1078/)
+### A4 · Sign-ins from many countries — [T1078](https://attack.mitre.org/techniques/T1078/)
 **Hypothesis:** a user signs in successfully from multiple countries in a short window.
 
 ```kusto
@@ -78,6 +84,7 @@ SigninLogs
 | sort by Countries desc
 ```
 **Triage:** corporate VPN or travel can explain this. Combine with `RiskLevelDuringSignIn` for a stronger signal.
+> This counts countries; it is not *impossible travel*. That needs the time and distance between **consecutive** sign-ins (sort by user and time, `prev()`, `geo_distance_2points()` on `LocationDetails.geoCoordinates`) and a flag when the implied speed beats an airliner.
 
 ### A5 · Risky sign-ins (Identity Protection) — [T1078](https://attack.mitre.org/techniques/T1078/)
 **Hypothesis:** Entra ID Protection flagged sign-ins as medium/high risk. *(Requires Entra ID P2 for populated risk fields.)*
@@ -96,7 +103,8 @@ SigninLogs
 ```kusto
 let suspect =
     SigninLogs
-    | where TimeGenerated > ago(1d) and ResultType != "0"
+    | where TimeGenerated > ago(1d)
+    | where ResultType in ("50126", "50053", "50055", "50057")   // credential failures, not MFA/KMSI interrupts (see A2)
     | summarize Failures = count() by UserPrincipalName
     | where Failures > 5;
 AuditLogs
@@ -162,7 +170,10 @@ DeviceProcessEvents
 DeviceProcessEvents
 | where TimeGenerated > ago(1d)
 | where FileName in~ ("powershell.exe","pwsh.exe")
-| where ProcessCommandLine has_any ("-enc","-EncodedCommand","-e ","FromBase64String","-w hidden","-nop","IEX","Invoke-Expression")
+// PowerShell accepts any prefix of -EncodedCommand (-e, -ec, -en, -enc, -enco, …) after -, en/em dash or /,
+// so a fixed list like "-enc" misses most of them; the regex covers every prefix.
+| where ProcessCommandLine matches regex @"(?i)\s[-–—/](e|ec|en|enc|enco|encod|encode|encoded|encodedc|encodedco|encodedcom|encodedcomm|encodedcomma|encodedcomman|encodedcommand)\s"
+     or ProcessCommandLine has_any ("FromBase64String","-w hidden","-nop","IEX","Invoke-Expression")
 | project TimeGenerated, DeviceName, AccountName, ProcessCommandLine,
           InitiatingProcessFileName, InitiatingProcessParentFileName
 | sort by TimeGenerated desc

@@ -1,7 +1,7 @@
 ---
 name: azure-sentinel-hunter
 description: >-
-  World-class Microsoft Sentinel KQL author, detection/use-case engineer, and threat hunter.
+  Expert Microsoft Sentinel KQL author, detection/use-case engineer, and threat hunter.
   Use whenever the work involves Microsoft Sentinel, Azure Monitor / Log Analytics, Microsoft
   Defender XDR (advanced hunting), or Kusto Query Language (KQL) — including: writing or
   debugging a KQL query; designing a scheduled analytic rule, NRT rule, or hunting query;
@@ -27,7 +27,7 @@ results because a column name, type, or location was assumed. **Before writing o
 query against a table, confirm every column you use against an authoritative source** — in order
 of preference:
 
-1. The **in-repo table library** at [`sentinel/tables/`](../../../sentinel/tables/README.md) — 21
+1. The **in-repo table library** at [`sentinel/tables/`](../../../sentinel/tables/README.md) — 27
    tables with validated schemas, gotchas, key columns, and **sample data you can actually run the
    query against**. Start here.
 2. The **Microsoft Learn table reference**: `https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/<tablename>`

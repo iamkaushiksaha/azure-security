@@ -35,13 +35,17 @@ Both methods create the same object — a queryable thing called **`DemoIdentity
 
 This creates a **saved function** from a `datatable()`. No ingestion, no waiting.
 
-1. Open **Microsoft Sentinel → Logs** (or **Log Analytics → Logs**), and make sure the editor is in **KQL mode**.
+1. Open a query editor:
+   - **Microsoft Defender portal** (primary): [security.microsoft.com](https://security.microsoft.com) → **Investigation & response → Hunting → Advanced hunting**, with your Sentinel workspace onboarded.
+   - **Azure portal** (alternative): **Microsoft Sentinel → Logs** (or **Log Analytics → Logs**), with the editor in **KQL mode**.
+
+   > Microsoft Sentinel in the Azure portal is supported until **31 March 2027**; after that it's Defender portal only (new tenants onboarding since July 2025 are onboarded to the Defender portal automatically). [Details](https://learn.microsoft.com/en-us/azure/sentinel/move-to-defender)
 2. Open [`seed-DemoIdentityLogs.kql`](seed-DemoIdentityLogs.kql), copy **Method A** (the whole `datatable(...)` block), paste it into the query editor, and select **Run**. You'll see 64 rows.
-3. In the results pane, select **Save → Save as function**. *(The **Save** control is on the query toolbar, top-left of the Logs editor; **Save as function** opens a small right-hand dialog — not **Save as query**.)*
+3. In the results pane, select **Save → Save as function**. *(The **Save** control is on the query toolbar, top-left of the editor; **Save as function** opens a small right-hand dialog — not **Save as query**. In Advanced hunting the dialog asks for **Name**, **Location** and **Description** instead of a legacy category — [custom functions in advanced hunting](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-custom-functions).)*
 4. Fill in the dialog:
    - **Function name:** `DemoIdentityLogs`
-   - **Legacy category:** `Functions`
-   - Leave *Save as computer group* unchecked and *Function parameters* empty.
+   - **Legacy category:** `Functions` *(Azure portal; in Advanced hunting pick a **Location** instead)*
+   - Leave *Save as computer group* (Azure portal) unchecked and *Function parameters* empty.
 5. Select **Save**. *(The function now appears under **Functions** in the left-hand schema pane — type `DemoIdentityLogs` in a new tab and it autocompletes.)*
 
 **Verify** — open a new query tab and run:

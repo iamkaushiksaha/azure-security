@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ KQL for Microsoft Sentinel — A Hands-On Learning Path
+# KQL for Microsoft Sentinel — A Hands-On Learning Path
 
 **From zero to threat hunting in Kusto Query Language — with a dataset you can run even if your Sentinel workspace is empty.**
 
@@ -8,8 +8,6 @@
 ![KQL](https://img.shields.io/badge/Language-KQL-512BD4)
 ![Azure Data Explorer](https://img.shields.io/badge/Practice-ADX%20Free%20Cluster-0062AD?logo=microsoftazure&logoColor=white)
 ![Level](https://img.shields.io/badge/Level-Novice%20%E2%86%92%20Hunter-2EA043)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
-![Maintained](https://img.shields.io/badge/Maintained-yes-success)
 
 </div>
 
@@ -95,7 +93,6 @@ Career starters & students · SOC Tier 1–2 analysts · threat hunters · detec
 
 <div align="center">
 
-*Built as world-class, practice-ready training material.*
-**Contributions welcome** — keep queries schema-validated and link Tier-1 sources.
+*Practice-ready training material: queries are schema-validated and claims link Tier-1 sources.*
 
 </div>

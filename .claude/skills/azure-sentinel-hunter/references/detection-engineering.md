@@ -19,7 +19,7 @@ Never skip *test* and *tune*. A rule shipped untested is a future incident-fatig
 | **Scheduled** | Most detections; aggregation/join over a lookback | minutes | The workhorse. `queryFrequency`/`queryPeriod`. |
 | **NRT (near-real-time)** | High-severity, single-table, need speed | ~1 min | One-table only, no unions of many tables, limited operators. |
 | **Microsoft security** | Surface Defender/MDC alerts as incidents | — | Config, not KQL. |
-| **Fusion** | ML multi-stage attack correlation | — | Managed by Microsoft; can't author the logic. |
+| **Fusion** | ML multi-stage attack correlation | — | Managed by Microsoft; can't author the logic. Azure portal only: disabled once the workspace is onboarded to the Defender portal, where the Defender XDR correlation engine replaces it ([Fusion](https://learn.microsoft.com/en-us/azure/sentinel/fusion)). |
 | **Anomaly** | Behavioral/UEBA baselines | — | Tunable templates. |
 | **Hunting query** | Not auto-alerting; analyst-run / scheduled hunts | — | Promote to scheduled rule when high-fidelity. |
 

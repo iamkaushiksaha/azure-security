@@ -7,6 +7,10 @@ can alert on, and what a query costs.
 - Sentinel is a solution **on top of a Log Analytics workspace**; tables live there and are queried
   with KQL. Defender XDR "advanced hunting" queries the same KQL over `Device*`, `Email*`, identity
   tables — skills transfer directly.
+- **Where queries run:** the Microsoft Defender portal (**Investigation & response → Hunting →
+  Advanced hunting**) is the primary editor for an onboarded workspace; **Sentinel → Logs** in the
+  Azure portal is supported only until **31 March 2027**, and new tenants since July 2025 are
+  onboarded to the Defender portal automatically.
 - **`TimeGenerated`** is the universal time column — filter on it in every query.
 - Tables come from **data connectors** (Entra, Defender, Office 365, AMA for Windows/Syslog, ARM
   activity, diagnostic settings). **No connector → empty table** → queries return nothing. This is
