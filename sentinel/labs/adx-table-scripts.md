@@ -1,7 +1,7 @@
-# ADX Table Creation & Ingestion Scripts (Reusable)
+# ADX table creation and ingestion scripts
 
-> **Purpose:** Enterprise-style reusable ADX scripts  
-> **Importance:** Critical for scaling labs, joins, and correlations
+> **Purpose:** reusable Azure Data Explorer scripts that create Sentinel-style tables and load the teaching CSVs,
+> so you can practise joins and cross-table correlation beyond `SigninLogs`.
 
 ---
 

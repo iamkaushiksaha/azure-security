@@ -1,7 +1,7 @@
 # DnsAuditEvents
 
 > **Category:** Security (Microsoft Sentinel — Windows DNS Server audit channel)
-> **Connector / source:** Windows DNS Server audit events, collected by the **Microsoft Sentinel "Windows DNS Server" / DNS connector** (AMA DCR or the legacy MMA/Log Analytics agent on the DNS server). Populated from the Windows DNS Server **Audit** ETW channel, not the Analytic/query channel.
+> **Connector / source:** Windows DNS Server audit events, collected by the **Microsoft Sentinel "Windows DNS Server" / DNS connector** (AMA DCR or the legacy MMA/Log Analytics agent on the DNS server, retired 31 Aug 2024). Populated from the Windows DNS Server **Audit** ETW channel, not the Analytic/query channel.
 > **Table plan:** Basic supported — the reference flags **Basic log: Yes** (also lake-only ingestion and ingestion-time DCR support). Defaults to Analytics unless the workspace explicitly sets the table to Basic.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/dnsauditevents
 
@@ -104,7 +104,7 @@ DnsAuditEvents
 ```
 **Triage:** True positive = sensitive names (`sso`, `vpn`, `autodiscover`) pointed at `185.220.101.2`/`91.219.236.18` with a 30–60s TTL. Benign = a planned cutover to a known new internal/cloud IP from the corporate range.
 
-### H2 · Malicious forwarder or zone-scope change — resolution hijack — [T1556](https://attack.mitre.org/techniques/T1556/)
+### H2 · Malicious forwarder or zone-scope change — resolution hijack — [T1557](https://attack.mitre.org/techniques/T1557/)
 **Hypothesis:** A server-level **forwarder** change (or a new external **zone scope**) repoints where the DNS server itself resolves, hijacking resolution org-wide.
 ```kusto
 DnsAuditEvents
@@ -115,7 +115,7 @@ DnsAuditEvents
 ```
 **Triage:** True positive = forwarder moved off the legitimate `168.63.129.16`/internal resolvers to `91.219.236.18`, or an `External` zone scope appears. Benign = approved change to public resolvers (e.g. `8.8.8.8`) inside a change window.
 
-### H3 · Deletion of infrastructure / service records — disruption or defense evasion — [T1485](https://attack.mitre.org/techniques/T1485/)
+### H3 · Deletion of infrastructure / service records — disruption (Impact) — [T1485](https://attack.mitre.org/techniques/T1485/)
 **Hypothesis:** Deletion of resource records — particularly under `_msdcs` or for security infrastructure — can break service resolution, blind logging, or remove evidence.
 ```kusto
 DnsAuditEvents

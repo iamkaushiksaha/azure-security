@@ -1,15 +1,15 @@
 # Sample data (Lab 02 — simplified teaching CSVs)
 
 These are **deliberately simplified, few-column CSVs** used by the ADX setup labs
-([Lab02_ADX_Setup](../labs/Lab02_ADX_Setup.md) · [lab02_adx_tablescripts](../labs/lab02_adx_tablescripts.md))
+([ADX setup](../labs/adx-setup.md) · [ADX table scripts](../labs/adx-table-scripts.md))
 to teach table creation and ingestion. The `.create table` scripts in those labs are matched to
 these reduced schemas.
 
 | CSV | Used by | Notes |
 |---|---|---|
-| `SigninLogs_sample.csv` | lab02_adx_tablescripts | 11-column teaching subset |
-| `SigninLogs_sample_important_columns_110rows.csv` | Lab02_ADX_Setup | 110 rows — volume for ingestion practice |
-| `AuditLogs_sample.csv` · `SecurityEvent_sample.csv` · `AzureActivity_sample.csv` · `OfficeActivity_sample.csv` | lab02_adx_tablescripts | reduced teaching schemas |
+| `SigninLogs_sample.csv` | ADX table scripts | 11-column teaching subset |
+| `SigninLogs_sample_important_columns_110rows.csv` | ADX setup | 110 rows — volume for ingestion practice |
+| `AuditLogs_sample.csv` · `SecurityEvent_sample.csv` · `AzureActivity_sample.csv` · `OfficeActivity_sample.csv` | ADX table scripts | reduced teaching schemas |
 
 > [!IMPORTANT]
 > **For schema-true data, use the [Sentinel Table Library](../tables/README.md) instead.**

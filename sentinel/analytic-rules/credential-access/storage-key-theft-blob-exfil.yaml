@@ -5,17 +5,22 @@ id: a7f3c2e1-9b4d-4e8a-b6c1-2f5d8e0a1c3b          # replace with a unique GUID p
 name: Storage account key theft followed by bulk blob exfiltration
 kind: Scheduled
 description: |
-  Hypothesis: an actor who can read a storage account's keys (control plane,
-  Microsoft.Storage/storageAccounts/listKeys) then uses that shared key to bulk-download
-  blobs (data plane, AuthenticationType=AccountKey) — bypassing Entra ID, so the blob
-  logs carry NO user identity. This rule bridges the two planes on the shared source IP
-  and recovers the thief from the listKeys caller.
+  Hypothesis: an actor who can read a storage account's keys or mint an account SAS
+  (control plane, Microsoft.Storage/storageAccounts/listKeys or listAccountSas) then uses
+  that shared key or SAS token to bulk-download blobs (data plane,
+  AuthenticationType=AccountKey or SAS) — bypassing Entra ID, so the blob logs carry NO
+  user identity. This rule bridges the two planes on the shared source IP and storage
+  account, and recovers the thief from the listKeys/listAccountSas caller.
   Why it's high-fidelity: it requires (a) a successful key/SAS listing, (b) AccountKey or
-  Anonymous bulk reads over a volume threshold, (c) from the SAME IP, (d) within 2h — so
-  routine OAuth access and normal admin key-listing alone do not fire.
-  Known false positives: legacy apps or backup jobs that legitimately use shared keys from
-  a stable IP; large one-off data migrations. Tune `minExfilMB` to your largest legitimate
-  AccountKey job and allow-list known automation IPs/principals via a watchlist.
+  SAS bulk reads (status 200/206) over a volume threshold, (c) on the SAME storage account,
+  (d) from the SAME IP, (e) with the listing up to 2h before the first read — so routine
+  OAuth access and normal admin key-listing alone do not fire.
+  Known false positives: legacy apps or backup jobs that legitimately use shared keys or
+  SAS from a stable IP; large one-off data migrations. Tune `minExfilMB` to your largest
+  legitimate AccountKey/SAS job and allow-list known automation IPs/principals via a watchlist.
+  Known gap: a key or SAS listing with no bulk read from the same IP (e.g. the key is used
+  from elsewhere, or not yet) does not alert here; cover key listing by unusual callers
+  with a separate rule.
 severity: High
 status: Available
 requiredDataConnectors:
@@ -24,8 +29,9 @@ requiredDataConnectors:
       - AzureActivity
   # StorageBlobLogs arrives via the storage account's diagnostic settings (StorageRead category)
   # — enable "Read" blob logs to Log Analytics; there is no gallery connector for it.
-queryFrequency: PT1H
-queryPeriod: PT3H                 # period > frequency: a listKeys can precede the read burst
+queryFrequency: 1h                # blob reads are evaluated over the last 1h only (readWindow)
+queryPeriod: 3h                   # key listings over 3h = readWindow + corrWindow, so a listing
+                                  # up to 2h before the first read still correlates; each burst alerts once
 triggerOperator: gt
 triggerThreshold: 0
 tactics:
@@ -37,12 +43,13 @@ relevantTechniques:
   - T1530      # Data from Cloud Storage
   - T1567      # Exfiltration Over Web Service
 query: |
-  let lookback   = 3h;       // covers a listKeys that precedes the read burst
-  let corrWindow = 2h;       // max gap between key theft and the bulk read
-  let minExfilMB = 100.0;    // tune to your largest legitimate AccountKey job
+  let readWindow  = 1h;      // = queryFrequency: each read burst is evaluated in one run only
+  let corrWindow  = 2h;      // max gap between key theft and the first bulk read
+  let keyLookback = readWindow + corrWindow;   // 3h = queryPeriod: a listing up to 2h before the oldest read in readWindow
+  let minExfilMB  = 100.0;   // tune to your largest legitimate AccountKey/SAS job
   let keyAccess =
       AzureActivity
-      | where TimeGenerated > ago(lookback)
+      | where TimeGenerated > ago(keyLookback)
       | where OperationNameValue in (
           "Microsoft.Storage/storageAccounts/listKeys/action",
           "Microsoft.Storage/storageAccounts/listAccountSas/action")
@@ -50,10 +57,10 @@ query: |
       | project KeyListTime = TimeGenerated, KeyTheftCaller = Caller,
                 KeyIp = CallerIpAddress, KeyResourceId = _ResourceId;
   StorageBlobLogs
-  | where TimeGenerated > ago(lookback)
+  | where TimeGenerated > ago(readWindow)
   | where OperationName in ("GetBlob", "ListBlobs")
-  | where AuthenticationType in ("AccountKey", "Anonymous") // bypasses Entra identity -> RequesterUpn is empty
-  | where StatusCode == "200"                               // StatusCode is a STRING in this table
+  | where AuthenticationType in ("AccountKey", "SAS")      // shared key or SAS token -> RequesterUpn is empty
+  | where StatusCode in ("200", "206")                      // 206 = ranged reads (AzCopy/SDK large downloads); STRING column
   | extend SrcIp = tostring(split(CallerIpAddress, ":")[0]) // StorageBlobLogs CallerIpAddress carries :port
   | summarize BlobReads = count(),
               ExfilMB   = round(sum(ResponseBodySize) / 1048576.0, 1),
@@ -62,6 +69,7 @@ query: |
           by SrcIp, StorageAccount = AccountName
   | where ExfilMB >= minExfilMB
   | join kind=inner keyAccess on $left.SrcIp == $right.KeyIp
+  | where tolower(KeyResourceId) endswith strcat("/storageaccounts/", tolower(StorageAccount))   // key listed on the account that was read
   | where KeyListTime <= FirstRead and KeyListTime >= FirstRead - corrWindow   // key theft preceded the read
   | project LastRead, SrcIp, KeyTheftCaller, StorageAccount, BlobReads, ExfilMB,
             KeyListTime, FirstRead, KeyResourceId, SampleBlobs
@@ -93,15 +101,20 @@ incidentConfiguration:
   groupingConfiguration:
     enabled: true
     reopenClosedIncident: false
-    lookbackDuration: PT6H
+    lookbackDuration: 6h
     matchingMethod: AllEntities          # fold key-theft + exfil alerts sharing the IP/account into one incident
 suppressionEnabled: false
-suppressionDuration: PT6H
+suppressionDuration: 6h
 version: 1.0.0
 
 # ── Validation (azure-sentinel-hunter / Operation Quiet Ledger sample data) ──
-# Emulated against sentinel/tables/{AzureActivity,StorageBlobLogs}/*_sample.csv:
-#   1 alert  →  SrcIp 185.220.101.2 · StorageAccount stcontosofin · 840.7 MB · 11 reads
-#               KeyTheftCaller svc-backup@contoso.com (listKeys @ 09:58, reads @ 10:17–10:24)
-#   0 false positives  →  benign OAuth reads (52.170.12.45, 3.6 MB) excluded by AuthenticationType;
-#                         alexw's listKeys from 91.219.236.18 had no matching bulk read → not flagged.
+# Emulated against sentinel/tables/{AzureActivity,StorageBlobLogs}/*_sample.csv, each
+# converted with csv_to_kql.py --rebase so the 1h/3h ago() windows match:
+#   1 alert  →  SrcIp 185.220.101.2 · StorageAccount stcontosofin · 829.7 MB · 8 AccountKey reads
+#               KeyTheftCaller svc-backup@contoso.com (listKeys @ 09:58, reads @ 10:17–10:21)
+#   Excluded by design  →  benign OAuth reads (52.170.12.45) by AuthenticationType; the 3 Anonymous
+#                          reads from 185.220.101.2 (no key involved); the 403 SAS read by StatusCode.
+#   Known gap (missed malicious activity)  →  alexw@contoso.com's listAccountSas (10:02) and listKeys
+#               (10:31) on stcontosofin from the second attacker IP 91.219.236.18 do NOT alert: no
+#               bulk blob read followed from that IP, and this rule only fires on listing + exfil
+#               together. Key/SAS listing alone needs its own rule (e.g. unusual caller or IP).

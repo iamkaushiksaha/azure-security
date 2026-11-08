@@ -1,7 +1,7 @@
 # AzureActivity
 
 > **Category:** Azure Activity (Azure Resources, Audit, Security)
-> **Connector / source:** Azure Activity log → the "Azure Activity" data connector in Microsoft Sentinel (modern path is a diagnostic-setting / DCR pipeline from the subscription Activity log; legacy path was the Log Analytics agent "Azure Activity log" connector). Subscription- and management-group-level control-plane events from Azure Resource Manager.
+> **Connector / source:** Azure Activity log → the "Azure Activity" data connector in Microsoft Sentinel (modern path is a diagnostic-setting / DCR pipeline from the subscription Activity log; the legacy path linked subscriptions to the workspace directly, which the connector has replaced with diagnostic settings deployed by Azure Policy). Subscription- and management-group-level control-plane events from Azure Resource Manager.
 > **Table plan:** Analytics (default). The reference flags **Basic log: No** and **Ingestion-time DCR support: No**, so Basic/Auxiliary plans and ingestion-time transforms are not available for this table.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/azureactivity
 
@@ -62,12 +62,12 @@ Full column list, validated against the Microsoft Learn reference. Types are the
 ## ⚠️ Schema gotchas
 - **Outcome is a STRING, in the `*Value` columns.** Filter `ActivityStatusValue == "Failed"` (string), not a bool/int. The bare `ActivityStatus`/`ActivitySubstatus`/`Category`/`OperationName`/`ResourceProvider` columns are the **legacy raw twins** — for every one of these, the `…Value` column is the one you query. Building dashboards on the non-`Value` twins is the classic mistake.
 - **Prefer the `_d` dynamic columns over the legacy string blobs.** `Authorization_d`, `Claims_d`, `Properties_d` are real `dynamic` (index/extract directly: `Authorization_d.action`, `tostring(Claims_d.appid)`). The same-named `Authorization`/`Claims`/`Properties` are deprecated strings; if you must read them, `parse_json()` first.
-- **`Caller` is not always a UPN.** For automation, managed identities, and app principals it is a **GUID** (the service-principal object id). A hunt that assumes `Caller contains "@"` will miss all service-principal activity (e.g. `svc-backup`). Use `Claims_d.appid` to resolve the app.
+- **`Caller` is not always a UPN.** For automation, managed identities, and app principals it is a **GUID** (the service-principal object id). A hunt that assumes `Caller contains "@"` will miss all service-principal activity. (A service *account* such as `svc-backup@contoso.com` is a user, so it does carry a UPN.) Use `Claims_d.appid` to resolve the app.
 - **`TenantId` here = the Log Analytics workspace ID**, not the Entra tenant. The Entra tenant / actor ids live inside `Claims_d` (`tid`, `oid`). Don't join `AzureActivity.TenantId` to `SigninLogs.AADTenantId`.
 - **A successful write usually produces ≥2 rows** (`Started` then `Succeeded`) sharing `CorrelationId`/`OperationId`. Count `distinct OperationId` (or filter `ActivityStatusValue == "Succeeded"`) when counting *operations*, or you will double-count.
 
 ## 🧪 Sample data
-[`AzureActivity_sample.csv`](AzureActivity_sample.csv) — 24 rows. Tells the **Operation Quiet Ledger** Azure-pivot step (~10:00): the compromised `alexw@contoso.com` and the abused service principal `svc-backup` (GUID caller) operate from attacker IPs `185.220.101.2` / `91.219.236.18` to (1) write a `roleAssignments` granting **Owner/Contributor on rg-finance-prod** (`Microsoft.Authorization/roleAssignments/write`), (2) call `Microsoft.Storage/storageAccounts/listKeys/action` on **stcontosofin** to steal access keys for blob exfil, and (3) write an NSG security rule opening egress (`Microsoft.Network/networkSecurityGroups/securityRules/write`) — plus a Key Vault access-policy change on `kv-contoso-prod`. These sit amid benign deployments by `dvora@contoso.com` and `itadmin@contoso.com` (resource group / VM / storage writes from corporate egress `52.170.12.45` / `20.98.111.30`). This is the **10:00 Azure role-write + storage-key-list** step, downstream of the 08:20 risky sign-in (`SigninLogs`) and feeding the 10:20 blob exfil.
+[`AzureActivity_sample.csv`](AzureActivity_sample.csv) — 24 rows. Tells the **Operation Quiet Ledger** Azure-pivot step (~10:00): the compromised `alexw@contoso.com` and the abused service account `svc-backup@contoso.com` operate from attacker IPs `185.220.101.2` / `91.219.236.18` to (1) write a `roleAssignments` granting **Owner/Contributor on rg-finance-prod** (`Microsoft.Authorization/roleAssignments/write`), (2) call `Microsoft.Storage/storageAccounts/listKeys/action` on **stcontosofin** to steal access keys for blob exfil, and (3) write an NSG security rule opening egress (`Microsoft.Network/networkSecurityGroups/securityRules/write`) — plus a Key Vault access-policy change on `kv-contoso-prod`. These sit amid benign deployments by `dvora@contoso.com` and `itadmin@contoso.com` (resource group / VM / storage writes from corporate egress `52.170.12.45` / `20.98.111.30`). This is the **10:00 Azure role-write + storage-key-list** step, downstream of the 08:20 risky sign-in (`SigninLogs`) and feeding the 10:20 blob exfil.
 
 The sample uses this curated subset of **real** columns: `TimeGenerated`, `Caller`, `CallerIpAddress`, `OperationNameValue`, `ActivityStatusValue`, `ActivitySubstatusValue`, `CategoryValue`, `Level`, `ResourceGroup`, `Resource`, `_ResourceId`, `ResourceProviderValue`, `SubscriptionId`, `CorrelationId`, `Authorization_d`, `Claims_d`, `Properties_d`.
 
@@ -87,7 +87,7 @@ AzureActivity
 ```
 **Triage:** True positive = a finance analyst / service principal granting itself Owner on `rg-finance-prod` from a non-corporate IP (`185.220.101.2`). Benign = `itadmin`/`dvora` performing expected grants from corporate egress during a change window.
 
-### H2 · Storage key / SAS theft — [T1552.005](https://attack.mitre.org/techniques/T1552/005/)
+### H2 · Storage key / SAS theft — [T1552](https://attack.mitre.org/techniques/T1552/)
 **Hypothesis:** A caller invokes `listKeys` or `listAccountSas` on a storage account to harvest long-lived credentials for data-plane exfiltration.
 ```kusto
 AzureActivity

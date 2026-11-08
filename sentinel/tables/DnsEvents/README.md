@@ -1,7 +1,8 @@
 # DnsEvents
 
 > **Category:** Network (Security — Sentinel DNS solution: `DnsAnalytics` / `SecurityInsights`)
-> **Connector / source:** **DNS** data connector (legacy MMA/Log Analytics agent DNS extension, or **Windows DNS Events via AMA**). Collects Windows DNS Server analytical + audit logs from domain controllers / DNS servers and uploads the per-query "lookup" records.
+> **Connector / source:** The legacy **DNS** solution / data connector on the **Log Analytics agent (MMA)**, retired 31 Aug 2024. Collects Windows DNS Server analytical + audit logs from domain controllers / DNS servers and uploads the per-query "lookup" records.
+> **New deployments:** the **Windows DNS Events via AMA** connector does **not** write here — it streams DNS analytical events into the ASIM-normalized `ASimDnsActivityLogs` table ([connect-dns-ama](https://learn.microsoft.com/en-us/azure/sentinel/connect-dns-ama)). Use `DnsEvents` for existing MMA-era data and `ASimDnsActivityLogs` (or the `_Im_Dns` parser) going forward.
 > **Table plan:** Analytics (default). The reference flags **Basic log: No**; DCR-at-ingestion and lake-only ingestion are supported.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/dnsevents
 
@@ -39,7 +40,7 @@ Full column list, validated against the Microsoft Learn reference. Types are KQL
 > Plus the billing/system columns `_BilledSize` (real), `_IsBillable` (string), `_ResourceId` (string), `_SubscriptionId` (string). **Total: 27 columns** per the reference page. No column has been invented; this table has **no `dynamic` columns** — `IPAddresses` is a comma-joined **string**, not an array.
 
 ## Key columns for detection & hunting
-- **Identity:** n/a directly — the legacy `DnsEvents` schema does **not** carry a user/UPN or process. Attribute activity by mapping `ClientIP` to a host/user via `DeviceLogonEvents` / `SigninLogs` / DHCP. (The newer `ASimDnsActivityLog` AMA path can add user/process; this table cannot.)
+- **Identity:** n/a directly — the legacy `DnsEvents` schema does **not** carry a user/UPN or process. Attribute activity by mapping `ClientIP` to a host/user via `DeviceLogonEvents` / `SigninLogs` / DHCP. (The newer `ASimDnsActivityLogs` AMA path can add user/process; this table cannot.)
 - **Host / device:** `Computer` is the **DNS server** that answered (not the client). The querying endpoint is identified only by `ClientIP`.
 - **Network:** `ClientIP` (requester) and `IPAddresses` (resolved answer string). `MaliciousIP` flags a TI-matched address. Geo via `RemoteIPCountry` / `RemoteIPLatitude` / `RemoteIPLongitude`.
 - **Outcome / result:** `ResultCode` — an **int** where `0` = success and non-zero = failure (e.g. `9003` NXDOMAIN). `Result` is the parallel **string** label. Use `ResultCode != 0` for failed resolutions.
@@ -50,7 +51,7 @@ Full column list, validated against the Microsoft Learn reference. Types are KQL
 - **`Computer` is the DNS SERVER, not the client.** A query from FIN-WS-07 logged by DC01 shows `Computer == "DC01"` and `ClientIP ==` FIN-WS-07's address. Pivoting on `Computer` to find "the infected host" is wrong — pivot on `ClientIP`.
 - **`ResultCode` is an INT (`0` = success); `Result` is the STRING twin.** Filter failures with `ResultCode != 0`, not by a string. NXDOMAIN surfaces as `ResultCode == 9003` (Windows DNS) with `Result == "NXDOMAIN"`.
 - **`IPAddresses` is a comma-joined STRING, not a `dynamic`/array.** To count or match answers use `split(IPAddresses, ",")` or `has`/`contains` — `IPAddresses[0]` will not work as array indexing.
-- **No user or process on this table.** Unlike `ASimDnsActivityLog` (AMA) or endpoint DNS, legacy `DnsEvents` has no UPN/account/process columns. Attribution requires a `ClientIP` join.
+- **No user or process on this table.** Unlike `ASimDnsActivityLogs` (AMA) or endpoint DNS, legacy `DnsEvents` has no UPN/account/process columns. Attribution requires a `ClientIP` join.
 - **TI columns are empty unless DNS TI matching is enabled.** `MaliciousIP`, `IndicatorThreatType`, and `Confidence` populate only when the workspace has threat-intelligence enrichment on DNS — do not assume their absence means "clean", and do not build a detection that *requires* them.
 
 ## 🧪 Sample data

@@ -79,11 +79,14 @@ Logs often hide data inside strings or dynamic (JSON) columns.
 
 ### `parse` — split structured text into columns
 
-> 🧩 **Illustrative pattern — not runnable as-is.** `MyTable`/`Message` are placeholders for *whatever table holds a delimited string column*. Swap them for a real one (e.g. `Syslog`/`SyslogMessage` — see the [Syslog sample](../../tables/Syslog/README.md), whose hunts parse exactly this way).
+> 🧩 **Runs as-is.** The inline `datatable` stands in for *whatever table holds a delimited string column*. In production, swap it for a real one (e.g. `Syslog`/`SyslogMessage` — see the [Syslog sample](../../tables/Syslog/README.md), whose hunts parse exactly this way).
 
 ```kusto
 // Message like: "SrcIP=10.0.0.1; DestIP=10.0.0.5; Action=Allow"
-MyTable
+datatable(Message:string) [
+    "SrcIP=10.0.0.1; DestIP=10.0.0.5; Action=Allow",
+    "SrcIP=10.0.0.7; DestIP=10.0.0.9; Action=Deny"
+]
 | parse Message with "SrcIP=" SrcIp "; DestIP=" DestIp "; Action=" Action
 | project SrcIp, DestIp, Action
 ```

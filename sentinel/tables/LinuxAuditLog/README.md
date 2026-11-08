@@ -1,7 +1,7 @@
 # LinuxAuditLog
 
 > **Category:** Security
-> **Connector / source:** Linux auditd records collected by the **Azure Monitor Agent (AMA)** under **Microsoft Defender for Cloud / Microsoft Sentinel** (the agent ships the kernel audit subsystem's `auditd` event stream into Log Analytics). Legacy collection via the Log Analytics agent (MMA/OMS) populates the same table.
+> **Connector / source:** Linux auditd records collected by the **Azure Monitor Agent (AMA)** under **Microsoft Defender for Cloud / Microsoft Sentinel** (the agent ships the kernel audit subsystem's `auditd` event stream into Log Analytics). Legacy collection via the Log Analytics agent (MMA/OMS, retired 31 Aug 2024) populated the same table.
 > **Table plan:** Analytics (default). The reference flags **Basic log: No**; ingestion-time DCR transformation **is** supported.
 > **Microsoft Learn:** https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/linuxauditlog
 
@@ -150,12 +150,12 @@ LinuxAuditLog
 **Triage:** True positive = same `ses` shows `wget` → `chmod` → `/tmp/payload` within minutes (keys `download-exec`/`exec-prep`/`malware-exec`). Benign = an admin fetching a signed package into a build dir, not `/tmp`, and not chmod-ing it executable.
 
 ### H4 · Audit-configuration tampering / privileged log destruction — [T1685.004](https://attack.mitre.org/techniques/T1685/004/)
-**Hypothesis:** `CONFIG_CHANGE` (audit rule removal), stopping the `auditd` service, or deleting files under `/var/log` with `euid=0` is defense evasion to blind the SOC.
+**Hypothesis:** `CONFIG_CHANGE` (audit rule removal), stopping the `auditd` service, or deleting files under `/var/log` with `euid=0` is defense impairment to blind the SOC.
 ```kusto
 LinuxAuditLog
 | where RecordType in ("CONFIG_CHANGE", "SERVICE_STOP")
       or (syscall == "unlink" and cwd startswith "/var/log")
-      or key in ("audit-tamper", "defense-evasion")
+      or key in ("audit-tamper", "defense-impairment")
 | project TimeGenerated, Computer, RecordType, comm, exe, cwd, euid, auid, key, SerialNumber
 | sort by TimeGenerated asc
 ```

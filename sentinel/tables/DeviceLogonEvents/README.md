@@ -84,7 +84,7 @@ The sample uses this curated subset of **real** columns: `TimeGenerated`, `Devic
 
 ## 🎯 Threat-hunting hypotheses (single-table)
 
-### H1 · RDP logon from an external/public IP — [T1021.001](https://attack.mitre.org/techniques/T1021/001/)
+### H1 · RDP logon from an external/public IP — [T1133](https://attack.mitre.org/techniques/T1133/)
 **Hypothesis:** A successful `RemoteInteractive` (RDP) logon whose `RemoteIP` is Public indicates inbound RDP from outside the corporate estate — a hallmark of initial access on a workstation.
 ```kusto
 DeviceLogonEvents
@@ -97,7 +97,7 @@ DeviceLogonEvents
 **Triage:** True positive = RDP from an unfamiliar public IP (e.g. `185.220.101.2`/`91.219.236.18` on FIN-WS-07). Benign = known admin-jump-host or VPN egress; cross-check the IP against approved RDP sources.
 
 ### H2 · Failed-logon burst then success — brute force / password spray — [T1110](https://attack.mitre.org/techniques/T1110/)
-**Hypothesis:** Five or more `LogonFailed` events against one device from a single source IP, followed by a `LogonSuccess`, indicates a successful credential-guessing attack (lateral movement to DC01).
+**Hypothesis:** Five or more `LogonFailed` events against one device from a single source IP, followed by a `LogonSuccess`, indicates a successful credential-guessing attack (here, the spray that precedes the move to DC01).
 ```kusto
 DeviceLogonEvents
 | where LogonType in ("Network", "RemoteInteractive")

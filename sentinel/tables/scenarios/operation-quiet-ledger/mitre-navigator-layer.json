@@ -1,7 +1,7 @@
 {
   "name": "Operation Quiet Ledger \u2014 Sentinel Table Library",
   "versions": {
-    "attack": "19",
+    "attack": "20",
     "navigator": "4.9.1",
     "layer": "4.5"
   },
@@ -58,10 +58,17 @@
       "enabled": true
     },
     {
+      "techniqueID": "T1133",
+      "score": 100,
+      "color": "#fd8d3c",
+      "comment": "DeviceLogonEvents \u2014 internet RDP from 185.220.101.2 onto FIN-WS-07 (external remote services)",
+      "enabled": true
+    },
+    {
       "techniqueID": "T1021.001",
       "score": 100,
       "color": "#fd8d3c",
-      "comment": "DeviceLogonEvents/SecurityEvent \u2014 RDP onto FIN-WS-07",
+      "comment": "DeviceLogonEvents/SecurityEvent \u2014 RDP from FIN-WS-07 onto DC01 (lateral movement)",
       "enabled": true
     },
     {
@@ -184,10 +191,10 @@
       "enabled": true
     },
     {
-      "techniqueID": "T1556",
+      "techniqueID": "T1557",
       "score": 100,
       "color": "#fd8d3c",
-      "comment": "DnsAuditEvents \u2014 DNS records modified to subvert resolution",
+      "comment": "DnsAuditEvents \u2014 malicious forwarder / rogue records redirect name resolution (adversary-in-the-middle)",
       "enabled": true
     },
     {
@@ -205,10 +212,10 @@
       "enabled": true
     },
     {
-      "techniqueID": "T1552.005",
+      "techniqueID": "T1552",
       "score": 100,
       "color": "#fd8d3c",
-      "comment": "AzureActivity \u2014 listKeys / storage account keys",
+      "comment": "AzureActivity \u2014 listKeys harvests storage account keys (unsecured credentials)",
       "enabled": true
     },
     {

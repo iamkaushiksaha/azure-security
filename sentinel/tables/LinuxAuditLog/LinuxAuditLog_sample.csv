@@ -33,9 +33,9 @@ TimeGenerated,Computer,RecordType,SerialNumber,syscall,exe,comm,exit,res,success
 2026-06-10T09:22:31Z,WEB-APP-01,SYSCALL,184500111,execve,/usr/bin/crontab,crontab,0,success,yes,1004,0,0,,,,pts/1,pts/1,7,2160,2151,/root,persistence
 2026-06-10T09:22:31Z,WEB-APP-01,EXECVE,184500111,,,crontab,,,,1004,0,0,,,,pts/1,pts/1,7,2160,2151,/root,persistence
 2026-06-10T09:23:50Z,WEB-APP-01,CONFIG_CHANGE,184500121,,,,,success,yes,1004,0,0,,,,pts/1,pts/1,7,2163,2151,/root,audit-tamper
-2026-06-10T09:24:12Z,WEB-APP-01,SERVICE_STOP,184500131,,/usr/bin/systemctl,systemctl,0,success,yes,1004,0,0,,,,pts/1,pts/1,7,2168,2151,/root,defense-evasion
-2026-06-10T09:26:39Z,WEB-APP-01,SYSCALL,184500141,unlink,/usr/bin/rm,rm,0,success,yes,1004,0,0,,,,pts/1,pts/1,7,2172,2151,/var/log,defense-evasion
-2026-06-10T09:26:39Z,WEB-APP-01,PATH,184500141,,,,,,,1004,0,0,,,,pts/1,pts/1,7,2172,2151,/var/log,defense-evasion
+2026-06-10T09:24:12Z,WEB-APP-01,SERVICE_STOP,184500131,,/usr/bin/systemctl,systemctl,0,success,yes,1004,0,0,,,,pts/1,pts/1,7,2168,2151,/root,defense-impairment
+2026-06-10T09:26:39Z,WEB-APP-01,SYSCALL,184500141,unlink,/usr/bin/rm,rm,0,success,yes,1004,0,0,,,,pts/1,pts/1,7,2172,2151,/var/log,defense-impairment
+2026-06-10T09:26:39Z,WEB-APP-01,PATH,184500141,,,,,,,1004,0,0,,,,pts/1,pts/1,7,2172,2151,/var/log,defense-impairment
 2026-06-10T08:30:05Z,WEB-APP-01,SYSCALL,184500005,execve,/usr/sbin/cron,cron,0,success,yes,4294967295,0,0,,,,,,4294967295,901,1,/,
 2026-06-10T08:31:12Z,WEB-APP-01,CRED_ACQ,184500006,,/usr/sbin/cron,,,success,yes,0,0,0,root,,,cron,,9,905,901,/,
 2026-06-10T09:00:18Z,WEB-APP-01,SYSCALL,184500041,execve,/usr/bin/apt-get,apt-get,0,success,yes,1002,1002,0,,,,pts/0,pts/0,5,2095,1990,/var/www/app,pkg-mgmt
