@@ -10,6 +10,17 @@ with sample logs, a correlated attack scenario, an example analytic rule, and a 
 > query on the site is checked with Microsoft's own KQL parser against the real table schemas. This repository holds
 > the source material behind the site's reference course and table library.
 
+## Start here
+
+1. **Learn the language:** the [KQL reference course](sentinel/kql/README.md). Stage 00 gives you practice data
+   in about five minutes, even with an empty workspace or no Azure subscription.
+2. **Learn the data:** the [table library](sentinel/tables/README.md): what each table holds, its schema and its
+   traps.
+3. **Hunt an incident:** [Operation Quiet Ledger](sentinel/tables/scenarios/operation-quiet-ledger/README.md),
+   one attack traced across the tables.
+4. **Ship a detection:** the [example analytic rule](sentinel/analytic-rules/README.md), with its hypothesis,
+   tuning notes and a test against the scenario's data.
+
 ## What's here
 
 | | What it is | Start with |
@@ -18,11 +29,14 @@ with sample logs, a correlated attack scenario, an example analytic rule, and a 
 | **Sentinel table library** | 27 Log Analytics and Defender XDR tables: what each holds, its full schema, gotchas, sample logs and MITRE ATT&CK-mapped hunts | [`sentinel/tables/`](sentinel/tables/README.md) |
 | **Attack scenario: Operation Quiet Ledger** | One correlated incident across the tables, for triage practice and for testing analytic rules before you ship them | [`sentinel/tables/scenarios/operation-quiet-ledger/`](sentinel/tables/scenarios/operation-quiet-ledger/README.md) |
 | **Example analytic rule** | Storage key theft followed by blob exfiltration, as KQL and as a deployable rule (YAML) | [`sentinel/analytic-rules/`](sentinel/analytic-rules/README.md) |
-| **Labs and sample data** | Azure Data Explorer setup on a free cluster, with small teaching CSVs | [`sentinel/labs/`](sentinel/labs/README.md), [`sentinel/sampledata/`](sentinel/sampledata/README.md) |
+| **Azure Data Explorer labs** | Load several Sentinel-style tables into a free ADX cluster and practise joins, with small teaching CSVs | [`sentinel/labs/`](sentinel/labs/README.md), [`sentinel/sampledata/`](sentinel/sampledata/README.md) |
 | **Azure Sentinel Hunter skill** | A reusable skill for AI assistants: KQL authoring, detection engineering and threat hunting, with references, scripts and rule templates | [`.claude/skills/azure-sentinel-hunter/`](.claude/skills/azure-sentinel-hunter/SKILL.md) |
 
-All sample data is synthetic (Contoso and Fabrikam users, placeholder subscription IDs). Nothing comes from a real
-tenant.
+All sample data is synthetic (Contoso and Fabrikam users, placeholder subscription IDs); nothing comes from a real
+tenant. Some IP addresses belong to real public ranges for realism, so don't block them on this data alone.
+
+**Checked on 2026-11-08:** every query compiles and binds against the Microsoft Sentinel and Defender XDR table
+schemas with Microsoft's KQL parser (via VeriKQL), and every ATT&CK technique ID is current in ATT&CK v20.
 
 ## Check your own KQL
 
@@ -32,8 +46,9 @@ your logs. Use it on the site, or connect it to Claude or ChatGPT as an MCP serv
 
 ## Writing new material
 
-New pages follow the [style guide](docs/docs_style_guide.md) and start from the
-[document template](docs/templates/enterprise_doc_template.md). Every query is a fenced `kql` block.
+New pages follow the [style guide](docs/style-guide.md) and start from the
+[page template](docs/templates/page-template.md): every query runnable, checked with Microsoft's parser, and mapped
+to the current ATT&CK release.
 
 ## Licence
 

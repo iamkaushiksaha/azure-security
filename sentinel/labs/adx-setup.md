@@ -1,4 +1,4 @@
-# Lab02 – Azure Data Explorer (ADX) Setup for KQL Practice
+# Azure Data Explorer setup for KQL practice
 
 > **Purpose:** Environment setup + `SigninLogs` ingestion  
 > **Outcome:** Local, Sentinel-like KQL practice environment
@@ -17,23 +17,21 @@
 This lab demonstrates how to practice **Microsoft Sentinel–style KQL**
 *without requiring a Sentinel workspace*.
 
-We use **Azure Data Explorer (ADX)** because it runs the **same KQL engine**
-used by:
+We use **Azure Data Explorer (ADX)** because it speaks the same Kusto Query Language as Microsoft Sentinel,
+Log Analytics and Defender XDR advanced hunting, and its free cluster costs nothing.
 
-- Microsoft Sentinel  
-- Log Analytics  
-- Microsoft Defender  
-
-This provides a **safe, free, and cost-effective** learning environment.
+Not everything carries over: ADX has no Sentinel-specific features such as ASIM parsers, watchlists
+(`_GetWatchlist`), Sentinel's built-in functions or the workspace's own tables. Queries that use those need a
+real workspace.
 
 ---
 
 ## ❓ Why Azure Data Explorer (ADX)?
 
-- Free tier available  
-- No security data ingestion costs  
-- Full KQL language support  
-- Ideal for experimentation and learning  
+- A free cluster: no Azure subscription or credit card  
+- No ingestion costs for practice data  
+- The same KQL language for querying  
+- Safe to experiment: nothing touches a production workspace  
 
 ---
 
@@ -48,9 +46,8 @@ This provides a **safe, free, and cost-effective** learning environment.
 
 1. Go to https://dataexplorer.azure.com  
 2. Sign in with your Microsoft account  
-3. Create a **Free cluster**  
-4. Create a database  
-   - Example name: `SentinelLabs`  
+3. Create a **free cluster**. It creates a database for you; use that database for this lab.  
+   Reference: [Create a free cluster](https://learn.microsoft.com/en-us/azure/data-explorer/start-for-free-web-ui)  
 
 ---
 
@@ -166,5 +163,6 @@ You now have:
 
 ## 🚀 What’s Next
 
-Proceed to **Lab03** to start writing structured hunting queries
-and applying detection logic.
+- Load more tables with the [table scripts](adx-table-scripts.md).
+- Learn the language step by step in the [KQL reference course](../kql/README.md), starting at Stage 01.
+- Practise on all 27 tables and the correlated attack scenario in the [table library](../tables/README.md).
