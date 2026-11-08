@@ -1,14 +1,16 @@
 // Storage account key theft -> bulk blob exfiltration
 // Correlates CONTROL-plane key/SAS listing (AzureActivity) with DATA-plane bulk
-// reads authenticated by that key (StorageBlobLogs, AccountKey/Anonymous -> no
-// in-table identity) from the SAME source IP within a short window.
+// reads authenticated by a shared key or SAS token (StorageBlobLogs, AccountKey/SAS
+// -> no in-table identity) on the SAME storage account, from the SAME source IP,
+// within a short window.
 // Schema-verified against sentinel/tables/{AzureActivity,StorageBlobLogs}.
-let lookback   = 3h;       // covers a listKeys that precedes the read burst
-let corrWindow = 2h;       // max gap between key theft and the bulk read
-let minExfilMB = 100.0;    // tune to your largest legitimate AccountKey job
+let readWindow  = 1h;      // = queryFrequency: each read burst is evaluated in one run only
+let corrWindow  = 2h;      // max gap between key theft and the first bulk read
+let keyLookback = readWindow + corrWindow;   // 3h = queryPeriod: a listing up to 2h before the oldest read in readWindow
+let minExfilMB  = 100.0;   // tune to your largest legitimate AccountKey/SAS job
 let keyAccess =
     AzureActivity
-    | where TimeGenerated > ago(lookback)
+    | where TimeGenerated > ago(keyLookback)
     | where OperationNameValue in (
         "Microsoft.Storage/storageAccounts/listKeys/action",
         "Microsoft.Storage/storageAccounts/listAccountSas/action")
@@ -16,10 +18,10 @@ let keyAccess =
     | project KeyListTime = TimeGenerated, KeyTheftCaller = Caller,
               KeyIp = CallerIpAddress, KeyResourceId = _ResourceId;
 StorageBlobLogs
-| where TimeGenerated > ago(lookback)
+| where TimeGenerated > ago(readWindow)
 | where OperationName in ("GetBlob", "ListBlobs")
-| where AuthenticationType in ("AccountKey", "Anonymous") // bypasses Entra identity -> RequesterUpn is empty
-| where StatusCode == "200"                               // StatusCode is a STRING in this table
+| where AuthenticationType in ("AccountKey", "SAS")      // shared key or SAS token -> RequesterUpn is empty
+| where StatusCode in ("200", "206")                      // 206 = ranged reads (AzCopy/SDK large downloads); STRING column
 | extend SrcIp = tostring(split(CallerIpAddress, ":")[0]) // StorageBlobLogs CallerIpAddress carries :port
 | summarize BlobReads = count(),
             ExfilMB   = round(sum(ResponseBodySize) / 1048576.0, 1),
@@ -28,6 +30,7 @@ StorageBlobLogs
         by SrcIp, StorageAccount = AccountName
 | where ExfilMB >= minExfilMB
 | join kind=inner keyAccess on $left.SrcIp == $right.KeyIp
+| where tolower(KeyResourceId) endswith strcat("/storageaccounts/", tolower(StorageAccount))   // key listed on the account that was read
 | where KeyListTime <= FirstRead and KeyListTime >= FirstRead - corrWindow   // key theft preceded the read
 | project LastRead, SrcIp, KeyTheftCaller, StorageAccount, BlobReads, ExfilMB,
           KeyListTime, FirstRead, KeyResourceId, SampleBlobs
