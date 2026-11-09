@@ -1,8 +1,9 @@
-# Azure Security: KQL and Microsoft Sentinel, hands-on
+# Azure Security
 
-Free learning and detection-engineering material for **Microsoft Sentinel** and **KQL** (Kusto Query Language) by
-**Kaushik Saha**: a KQL course you can run with an empty workspace, a library of 27 Sentinel and Defender XDR tables
-with sample logs, a correlated attack scenario, an example analytic rule, and a reusable threat-hunting skill.
+Hands-on Azure security work by **Kaushik Saha**, free to use. It starts with **Microsoft Sentinel** and **KQL**
+(Kusto Query Language): a KQL course you can run with an empty workspace, a library of 27 Sentinel and Defender XDR
+tables with sample logs, a correlated attack scenario, an example analytic rule, and a reusable threat-hunting skill.
+More areas of Azure security follow (see [Coming next](#coming-next)).
 
 > **Learn KQL interactively → [verikql.kaushiksaha.com/learn](https://verikql.kaushiksaha.com/learn)**
 >
@@ -37,6 +38,19 @@ tenant. Some IP addresses belong to real public ranges for realism, so don't blo
 
 **Checked on 2026-11-08:** every query compiles and binds against the Microsoft Sentinel and Defender XDR table
 schemas with Microsoft's KQL parser (via VeriKQL), and every ATT&CK technique ID is current in ATT&CK v20.
+
+## Coming next
+
+Each area is added when its material is ready and checked, rather than as an empty folder.
+
+- **Microsoft Defender for Cloud:** posture (secure score and recommendations), workload protection plans, and
+  querying its alerts and recommendations with KQL and Azure Resource Graph.
+- **Microsoft Entra ID security:** sign-in and audit hunting, Conditional Access, and identity incident response
+  (disabling accounts, revoking sessions, least-privilege Microsoft Graph permissions for automation).
+- **SOAR with Logic Apps:** Microsoft Sentinel playbooks and automation rules, starting with incident hand-off to
+  ServiceNow.
+- **Operational scripts:** PowerShell, Python and Azure CLI for Sentinel and Azure security operations, such as
+  exporting Content Hub rule templates and auditing Azure Container Registry policies.
 
 ## Check your own KQL
 
