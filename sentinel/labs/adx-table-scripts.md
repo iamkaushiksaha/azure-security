@@ -51,10 +51,10 @@ sentinel/sampledata/
 > These are **simplified teaching CSVs**. For **schema-true** data (every column validated against
 > Microsoft Learn) across **27 tables** plus a correlated attack scenario, use the
 > [Sentinel Table Library](../tables/README.md). To ingest any library table into ADX with a
-> correct auto-generated `.create table` + ingest, run the skill's generator instead of writing the
+> correct auto-generated `.create table` + ingest, run the generator in [`tools/`](../../tools/README.md) instead of writing the
 > schema by hand:
 > ```bash
-> python3 .claude/skills/azure-sentinel-hunter/scripts/csv_to_kql.py \
+> python3 tools/csv_to_kql.py \
 >     sentinel/tables/AuditLogs/AuditLogs_sample.csv --mode adx
 > ```
 
