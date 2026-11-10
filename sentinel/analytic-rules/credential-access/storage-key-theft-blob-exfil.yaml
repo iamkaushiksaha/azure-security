@@ -1,5 +1,5 @@
 # Microsoft Sentinel — Scheduled Analytic Rule
-# Built with the azure-sentinel-hunter skill: schema-verified against the table
+# Schema-verified against the table
 # library, tested against the Operation Quiet Ledger sample data (see Validation).
 id: a7f3c2e1-9b4d-4e8a-b6c1-2f5d8e0a1c3b          # replace with a unique GUID per workspace
 name: Storage account key theft followed by bulk blob exfiltration
@@ -107,7 +107,7 @@ suppressionEnabled: false
 suppressionDuration: 6h
 version: 1.0.0
 
-# ── Validation (azure-sentinel-hunter / Operation Quiet Ledger sample data) ──
+# ── Validation (Operation Quiet Ledger sample data) ──
 # Emulated against sentinel/tables/{AzureActivity,StorageBlobLogs}/*_sample.csv, each
 # converted with csv_to_kql.py --rebase so the 1h/3h ago() windows match:
 #   1 alert  →  SrcIp 185.220.101.2 · StorageAccount stcontosofin · 829.7 MB · 8 AccountKey reads

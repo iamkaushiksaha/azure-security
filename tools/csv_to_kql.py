@@ -13,7 +13,7 @@ STRING even though the values look numeric. Falls back to value inference for an
 column the schema table doesn't list.
 
 Usage:
-    python3 csv_to_kql.py <path/to/Table_sample.csv> [--mode datatable|adx] [--rebase]
+    python3 tools/csv_to_kql.py <path/to/Table_sample.csv> [--mode datatable|adx] [--rebase]
 
     --mode datatable   (default) emit a `let <Table> = datatable(...)` block
     --mode adx         emit `.create table` + `.ingest inline` control commands
@@ -21,9 +21,9 @@ Usage:
                        in the table's hunts match today (datatable mode only)
 
 Examples:
-    python3 csv_to_kql.py sentinel/tables/SigninLogs/SigninLogs_sample.csv
-    python3 csv_to_kql.py sentinel/tables/SigninLogs/SigninLogs_sample.csv --mode adx
-    python3 csv_to_kql.py sentinel/tables/DnsEvents/DnsEvents_sample.csv --rebase
+    python3 tools/csv_to_kql.py sentinel/tables/SigninLogs/SigninLogs_sample.csv
+    python3 tools/csv_to_kql.py sentinel/tables/SigninLogs/SigninLogs_sample.csv --mode adx
+    python3 tools/csv_to_kql.py sentinel/tables/DnsEvents/DnsEvents_sample.csv --rebase
 """
 import argparse
 import csv

@@ -214,18 +214,14 @@ A hunt finds something *once*; a **detection** finds it *continuously*. Take **B
 
 1. **Confirm it's high-fidelity.** Run B3 against the [`DeviceProcessEvents` sample](../../tables/DeviceProcessEvents/README.md) — it should return the `winword → powershell -enc` rows and little else.
 2. **Add entity columns** the incident needs: `project`-out `DeviceName` (Host), `AccountName` (Account), and the command line.
-3. **Scaffold the rule** from the query with the [Azure Sentinel Hunter skill](../../../.claude/skills/azure-sentinel-hunter/SKILL.md):
-   ```bash
-   python3 .claude/skills/azure-sentinel-hunter/scripts/scaffold_analytic_rule.py \
-       --name "Encoded PowerShell from Office process" \
-       --query-file b3.kql --severity High \
-       --tactics Execution --techniques T1059.001 \
-       --host-col DeviceName --account-col AccountName > rule.yaml
-   ```
-4. **Finish it** — required connectors, a false-positive note, and a `queryFrequency`/`queryPeriod`.
+3. **Write the rule definition:** name, severity, `queryFrequency` and `queryPeriod`, tactics and techniques
+   (Execution, T1059.001), entity mappings (Host from `DeviceName`, Account from `AccountName`), the required data
+   connectors and a false-positive note. The worked example below has every field.
+4. **Test it on the sample data** before it goes near a workspace: paste the table's sample in front of the query
+   (`python3 tools/csv_to_kql.py sentinel/tables/DeviceProcessEvents/DeviceProcessEvents_sample.csv --rebase`).
 5. **Study a worked example:** [`storage-key-theft-blob-exfil.yaml`](../../analytic-rules/credential-access/storage-key-theft-blob-exfil.yaml) is a complete, sample-tested rule built exactly this way — read it end-to-end, including its inline validation evidence.
 
-Detection engineering (rule types, entity mapping, FP-tuning, deploy-as-code) has its own guide in the skill: [`references/detection-engineering.md`](../../../.claude/skills/azure-sentinel-hunter/references/detection-engineering.md).
+Microsoft's guide to the rule wizard and every field: [Create a scheduled analytics rule](https://learn.microsoft.com/azure/sentinel/create-analytics-rules).
 
 ## 🎓 Capstone — hunt the whole intrusion
 
@@ -233,7 +229,7 @@ Single-table hunts are the warm-up. The real skill is **correlation**: chaining 
 
 1. Start from **A1 (password spray)** on the `SigninLogs` sample → find the attacker IP.
 2. Pivot that IP into `DeviceLogonEvents` (the RDP), `AzureActivity` (the `listKeys`), and `StorageBlobLogs` (the exfil) — the scenario's cross-table join queries show the moves.
-3. Write it up with the skill's [hunt-report template](../../../.claude/skills/azure-sentinel-hunter/templates/hunt-report.md), then promote your best finding to a rule.
+3. Write it up: the hypothesis, the queries you ran, the evidence, what you'd detect next. Then promote your best finding to a rule.
 
 ## ✅ You'll know you've completed Stage 04 when you can
 

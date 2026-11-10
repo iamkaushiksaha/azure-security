@@ -15,10 +15,10 @@ these reduced schemas.
 > **For schema-true data, use the [Sentinel Table Library](../tables/README.md) instead.**
 > It has every column validated against Microsoft Learn, gotchas, MITRE-mapped hunts, and a
 > correlated [attack scenario](../tables/scenarios/operation-quiet-ledger/README.md) — 27 tables.
-> To ingest any of those into ADX with a correct auto-generated schema, use the skill's generator:
+> To ingest any of those into ADX with a correct auto-generated schema, use the generator in [`tools/`](../../tools/README.md):
 >
 > ```bash
-> python3 .claude/skills/azure-sentinel-hunter/scripts/csv_to_kql.py \
+> python3 tools/csv_to_kql.py \
 >     sentinel/tables/SigninLogs/SigninLogs_sample.csv --mode adx
 > ```
 >
